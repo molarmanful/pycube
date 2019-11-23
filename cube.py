@@ -1,3 +1,4 @@
+import random
 from piece import Piece
 
 
@@ -6,6 +7,10 @@ class Cube:
     def __init__(self, sz=100):
         self.sz = sz
         self.pieces = []
+        self.queue = []
+        self.mmode = False
+        self.moving = 0
+        
         id = 0
         for x in range(-1, 2):
             for y in range(-1, 2):
@@ -22,17 +27,41 @@ class Cube:
         popMatrix()
     
     
+    def push(self, *ms):
+        self.queue.extend(ms)
+        
+        
+    def pop(self):
+        return self.queue.pop()
+    
+        
+    def scramble(self, l=25):
+        for i in range(l):
+            self.push(random.choice('LRUDFB') + random.choice(["'", '2']))
+        self.move()
+    
     def move(self, *ms):
         mmap = {
-                'L': (self.moveZ, -1), 'M': (self.moveZ, 0), 'R': (self.moveZ, 1),
-                'U': (self.moveY, -1), 'E': (self.moveY, 0), 'D': (self.moveY, 1),
-                'F': (self.moveY, -1), 'S': (self.moveY, 0), 'B': (self.moveY, 1),
-                'X': (self.moveX,  2), 'Y': (self.moveY, 2), 'Z': (self.moveZ, 2)
+                'L': (self.moveZ, -1, -1), 'M': (self.moveZ, 0, -1), 'R': (self.moveZ, 1, 1),
+                'U': (self.moveY, -1,  1), 'E': (self.moveY, 0, -1), 'D': (self.moveY, 1, -1),
+                'F': (self.moveX, -1,  1), 'S': (self.moveX, 0, -1), 'B': (self.moveX, 1, -1),
+                'X': (self.moveX,  2,  1), 'Y': (self.moveY, 2,  1), 'Z': (self.moveZ, 2,  1)
                 }
         
-        for m in ms:
-            f, slice = mmap[m[0].upper()]
-            f(slice, -1 if m[-1] == "'" else 1)
+        if self.moving or len(self.queue):
+            self.move(self.pop())
+            self.move(*ms)
+            
+        else:
+            for m in ms:
+                f, slice, dir = mmap[m[0].upper()]
+                if "'" in m:
+                    f(slice, -dir)
+                elif '2' in m:
+                    f(slice, dir)
+                    f(slice, dir)
+                else:
+                    f(slice, dir)
         
         
     def moveX(self, slice, dir=1):
