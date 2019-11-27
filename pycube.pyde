@@ -18,12 +18,11 @@ def setup():
     
     CUBE.scramble()
     
-    
 def draw():
     background(255)
-        
+    monitorKey()   
     rotateX(-HALF_PI / 3)
-    rotateY(HALF_PI / 2)
+    rotateY(HALF_PI / 2) 
     CUBE.display()
     
     CAM.beginHUD()
@@ -32,15 +31,22 @@ def draw():
     textAlign(LEFT, TOP)
     text(['keyboard', 'mouse'][CUBE.mmode] + ' mode', 3, 3)
     CAM.endHUD()
-    
+mod = "'" 
 def keyPressed():
+    global mod
     if key == ENTER:
         CAM.reset(300)
         CUBE.mmode = not CUBE.mmode
         CAM.setActive(CUBE.mmode)
     
-    if(not CUBE.mmode):
+    if(not CUBE.mmode): 
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':
+            CUBE.rotate3.rotating = True 
             mod = "'" if key == key.upper() else ''
-            CUBE.move(key.upper() + mod)
-            print(key.upper() + mod)
+            
+def monitorKey(): 
+    global mod 
+    if CUBE.rotate3.rotationDone:
+        CUBE.move(key.upper() + mod) 
+        print(key.upper() + mod) 
+        CUBE.rotate3.rotationDone == False     

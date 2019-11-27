@@ -1,6 +1,5 @@
 from sticker import Sticker
 
-
 class Piece:
     
     def __init__(self, id, x, y, z, sz):
@@ -18,21 +17,20 @@ class Piece:
                          Sticker(0, 0, 1, color(0, 255, 0), self.sz)
                          ]
         
-        
-    def display(self):
+    def display(self): 
         x = self.x
         y = self.y
         z = self.z
-        sz = self.sz
+        sz = self.sz 
         
-        pushMatrix()
+        pushMatrix() 
         stroke(0)
         strokeWeight(sz // 10 or 1)
         noFill()
-        translate(sz * (x), sz * (y), sz * (z))  
+        translate(sz * (x + .5), sz * (y + .5), sz * (z + .5))
         box(sz)
         for s in self.stickers:
-            s.display()
+            s.display() 
         popMatrix()
 
 
@@ -42,16 +40,16 @@ class Piece:
         self.z = z
         
         
-    def rX(self, dir):
+    def rX(self, dir,angle):
         for s in self.stickers:
-            s.rX(dir * HALF_PI)
+            s.rX(dir * angle) 
         
         
-    def rY(self, dir):
+    def rY(self, dir,angle):
         for s in self.stickers:
-            s.rY(dir * HALF_PI)
+            s.rY(dir * angle)
         
         
-    def rZ(self, dir):
+    def rZ(self, dir,angle):
         for s in self.stickers:
-            s.rZ(dir * HALF_PI)
+            s.rZ(dir * angle) 

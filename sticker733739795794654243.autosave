@@ -1,3 +1,4 @@
+
 class Sticker:
     
     def __init__(self, x, y, z, c, sz):
@@ -17,12 +18,12 @@ class Sticker:
         pushMatrix()
         noStroke()
         fill(self.c)
-        rectMode(CENTER)
-        translate(x * sz / 2, y * sz / 2, z * sz / 2) 
+        rectMode(CENTER) 
+        translate(x * sz / 2, y * sz / 2, z * sz / 2)
         if x:
-            rotateY(HALF_PI)
+            rotateY(HALF_PI) 
         elif y:
-            rotateX(HALF_PI)
+            rotateX(HALF_PI) 
         square(0, 0, sz)
         popMatrix()
     
