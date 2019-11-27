@@ -1,16 +1,19 @@
 import random
 from piece import Piece
 from anim import Anim
+from stack import Stack
 
 
 class Cube:
     
-    def __init__(self, sz=100):
+    def __init__(self, sz=100, speed=.2):
         self.sz = sz
+        self.speed = speed
         self.pieces = []
-        self.queue = []
+        self.queue = Stack()
+        self.anims = Stack()
         self.mmode = False
-        self.moving = 0
+        self.moving = False
         
         id = 0
         for x in range(-1, 2):
@@ -21,45 +24,51 @@ class Cube:
                     
                     
     def display(self):
+        a = self.anims.get(0)
         for p in self.pieces:
+            pushMatrix()
+            if a:
+                if a.axis == 2 and p.z == a.slice:
+                    rotateZ(a.rot)
+                elif a.axis == 1 and p.y == a.slice:
+                    rotateY(a.rot)
+                elif a.axis == 0 and p.x == a.slice:
+                    rotateX(a.rot)
             p.display()
-    
-    
-    def push(self, *ms):
-        self.queue.extend(ms)
-        
-        
-    def pop(self):
-        return self.queue.pop()
+            popMatrix()
     
         
     def scramble(self, l=25):
         for i in range(l):
-            self.push(random.choice('LRUDFB') + random.choice(["'", '2']))
-        self.move()
+            self.queue.add(random.choice('LRUDFB') + random.choice(["'", '2']))
     
-    def move(self, *ms): 
+    def move(self, *ms):
         mmap = {
-                'L': (self.moveZ, -1, -1), 'M': (self.moveZ, 0, -1), 'R': (self.moveZ, 1,  1),
-                'U': (self.moveY, -1,  1), 'E': (self.moveY, 0, -1), 'D': (self.moveY, 1, -1),
-                'F': (self.moveX, -1, -1), 'S': (self.moveX, 0, -1), 'B': (self.moveX, 1,  1),
-                'X': (self.moveZ,  2,  1), 'Y': (self.moveY, 2,  1), 'Z': (self.moveX, 2, -1)
+                'L': (2, -1, -1), 'M': (2, 0, -1), 'R': (2, 1,  1),
+                'U': (1, -1, -1), 'E': (1, 0,  1), 'D': (1, 1,  1),
+                'F': (0, -1, -1), 'S': (0, 0, -1), 'B': (0, 1,  1),
+                'X': (2,  2,  1), 'Y': (1, 2,  1), 'Z': (0, 2, -1)
                 }
         
-        if self.moving or len(self.queue):
-            self.move(self.pop())
-            self.move(*ms)
-            
-        else:
-            for m in ms:
-                f, slice, dir = mmap[m[0].upper()]
-                if "'" in m:
-                    f(slice, -dir)
-                elif '2' in m:
-                    f(slice, dir)
-                    f(slice, dir)
-                else:
-                    f(slice, dir)
+        for m in ms:
+            axis, slice, dir = mmap[m[0].upper()]
+            if "'" in m:
+                self.anims.add(Anim(self, axis, slice, -dir, self.speed))
+            elif '2' in m:
+                self.anims.add(Anim(self, axis, slice, dir, self.speed), Anim(self, axis, slice, dir, self.speed))
+            else:
+                self.anims.add(Anim(self, axis, slice, dir, self.speed))
+        
+        
+    def anim(self):
+        if self.anims.get(0):
+            if self.anims.get(0).done:
+                self.anims.pop()
+            else:
+                self.anims.get(0).step()
+                
+        elif self.queue.get(0):
+            self.move(self.queue.pop())
         
         
     def moveX(self, slice, dir=1):

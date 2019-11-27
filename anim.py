@@ -1,26 +1,26 @@
 class Anim:
     
-    def __init__(self, x, y, z, dir, speed = .1): 
-        self.x = x
-        self.y = y
-        self.z = z
+    def __init__(self, cube, axis, slice, dir, speed=.2):
+        self.cube = cube
+        self.axis = axis
+        self.slice = slice
+        self.dir = dir
         self.rot = 0
         self.speed = speed
-        self.dir = dir
-        self.roting = False  
-        self.rotdone = False
-    
-    def start(self):
-        self.roting = True
-        while roting:
-            self.step()
+        self.ing = True
+        self.done = False
+        
         
     def step(self):
-        if abs(self.rot) > HALF_PI:
-            self.rot = 0
-            self.roting = False
-            self.rotdone = True
-        elif self.rot < HALF_PI and self.roting:  
+        if self.ing:
             self.rot += self.dir * self.speed
-        
-        
+            if abs(self.rot) > HALF_PI:
+                self.rot = 0
+                self.ing = False
+                self.done = True
+                if self.axis == 2:
+                    self.cube.moveZ(self.slice, self.dir)
+                elif self.axis == 1:
+                    self.cube.moveY(self.slice, -self.dir)
+                else:
+                    self.cube.moveX(self.slice, self.dir)

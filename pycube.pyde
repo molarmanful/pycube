@@ -4,6 +4,7 @@ from cube import Cube
 CUBE = Cube()
 CAM = None
 
+
 def setup():
     global CAM
     
@@ -16,10 +17,14 @@ def setup():
     CAM.setCenterDragHandler(None)
     CAM.setActive(False)
     
+    CUBE.scramble()
+    
+    
 def draw():
     background(255)
     rotateX(-HALF_PI / 3)
-    rotateY(HALF_PI / 2) 
+    rotateY(HALF_PI * 2 / 3)
+    CUBE.anim()
     CUBE.display()
     
     CAM.beginHUD()
@@ -28,6 +33,7 @@ def draw():
     textAlign(LEFT, TOP)
     text(['keyboard', 'mouse'][CUBE.mmode] + ' mode', 3, 3)
     CAM.endHUD()
+
 
 def keyPressed():
     if key == ENTER:
@@ -38,5 +44,4 @@ def keyPressed():
     if not CUBE.mmode: 
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':
             mod = "'" if key == key.upper() else ''
-            CUBE.move(key.upper() + mod)
-            print(key == key.upper(), key.upper() + mod)
+            CUBE.queue.add(key.upper() + mod)

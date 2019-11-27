@@ -20,16 +20,13 @@ class Piece:
         
         
     def display(self):
-        x = self.x
-        y = self.y
-        z = self.z
         sz = self.sz
         
         pushMatrix()
         stroke(0)
         strokeWeight(sz // 10 or 1)
         noFill()
-        translate(sz * x, sz * y, sz * z)
+        translate(sz * self.x, sz * self.y, sz * self.z)
         box(sz)
         for s in self.stickers:
             s.display()
