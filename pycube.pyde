@@ -21,6 +21,7 @@ def setup():
     
     
 def draw():
+    
     background(255)
     rotateX(-HALF_PI / 3)
     rotateY(HALF_PI * 2 / 3)
@@ -36,6 +37,7 @@ def draw():
 
 
 def keyPressed():
+    
     if key == ENTER:
         CAM.reset(300)
         CUBE.mmode = not CUBE.mmode

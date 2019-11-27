@@ -4,6 +4,7 @@ from sticker import Sticker
 class Piece:
     
     def __init__(self, id, x, y, z, sz):
+        
         self.id = id
         self.x = x
         self.y = y
@@ -20,35 +21,43 @@ class Piece:
         
         
     def display(self):
+        
         sz = self.sz
         
         pushMatrix()
+        
         stroke(0)
         strokeWeight(sz // 10 or 1)
         noFill()
         translate(sz * self.x, sz * self.y, sz * self.z)
         box(sz)
+        
         for s in self.stickers:
             s.display()
+            
         popMatrix()
 
 
     def pos(self, x, y, z):
+        
         self.x = x
         self.y = y
         self.z = z
         
         
     def rX(self, dir):
+        
         for s in self.stickers:
             s.rX(dir * HALF_PI)
         
         
     def rY(self, dir):
+        
         for s in self.stickers:
             s.rY(dir * HALF_PI)
         
         
     def rZ(self, dir):
+        
         for s in self.stickers:
             s.rZ(dir * HALF_PI)
