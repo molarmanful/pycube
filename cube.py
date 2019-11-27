@@ -31,13 +31,13 @@ class Cube:
             pushMatrix()
             
             if a:
-                if a.axis == 2 and p.z == a.slice:
+                if a.axis == 2 and (a.slice > 1 or p.z == a.slice):
                     rotateZ(a.rot)
                     
-                elif a.axis == 1 and p.y == a.slice:
+                elif a.axis == 1 and (a.slice > 1 or p.y == a.slice):
                     rotateY(a.rot)
                     
-                elif a.axis == 0 and p.x == a.slice:
+                elif a.axis == 0 and (a.slice > 1 or p.x == a.slice):
                     rotateX(a.rot)
                     
             p.display()
@@ -46,8 +46,23 @@ class Cube:
         
     def scramble(self, l=25):
         
+        a = ' '
+        b = ' '
+        
         for i in range(l):
-            self.queue.add(random.choice('LRUDFB') + random.choice(["'", '2']))
+            choices = ['RL', 'UD', 'FB']
+            
+            for i, m in enumerate(choices):
+                
+                if a in m:
+                    choices[i] = m.replace(a, '')
+                    
+                    if b in m:
+                        choices[i] = ''
+                    
+            b, a = a, random.choice(''.join(choices))
+            self.queue.push(a + random.choice(["'", '2', '']))
+    
     
     def move(self, *ms):
         
@@ -55,7 +70,7 @@ class Cube:
                 'L': (2, -1, -1), 'M': (2, 0, -1), 'R': (2, 1,  1),
                 'U': (1, -1, -1), 'E': (1, 0,  1), 'D': (1, 1,  1),
                 'F': (0, -1, -1), 'S': (0, 0, -1), 'B': (0, 1,  1),
-                'X': (2,  2,  1), 'Y': (1, 2,  1), 'Z': (0, 2, -1)
+                'X': (2,  2,  1), 'Y': (1, 2, -1), 'Z': (0, 2, -1)
                 }
         
         for m in ms:

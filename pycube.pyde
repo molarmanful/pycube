@@ -17,8 +17,6 @@ def setup():
     CAM.setCenterDragHandler(None)
     CAM.setActive(False)
     
-    CUBE.scramble()
-    
     
 def draw():
     
@@ -29,10 +27,12 @@ def draw():
     CUBE.display()
     
     CAM.beginHUD()
+    
     fill(0)
     textSize(20)
     textAlign(LEFT, TOP)
     text(['keyboard', 'mouse'][CUBE.mmode] + ' mode', 3, 3)
+    
     CAM.endHUD()
 
 

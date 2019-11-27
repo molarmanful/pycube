@@ -23,4 +23,5 @@ class Stack:
     
     def get(self, i):
         
-        return None if not len(self.items) else self.items[i]
+        if len(self.items) > i:
+            return self.items[i]
