@@ -1,6 +1,6 @@
 import random
 from piece import Piece
-from rotate3D import rotate3D 
+from anim import Anim
 
 
 class Cube:
@@ -18,21 +18,11 @@ class Cube:
                 for z in range(-1, 2):
                     self.pieces.append(Piece(id, x, y, z, self.sz))
                     id += 1
-        self.rotate3 = rotate3D(1,0,0,-1) 
+                    
                     
     def display(self):
-        pushMatrix() 
-        self.rotate3.moveAngle() 
-        #translate(0,25,25) 
         for p in self.pieces:
-            pushMatrix() 
-            if p.x == self.rotate3.x_side: 
-                translate(0,0,-1) 
-                rotateX(self.rotate3.rotationAngle) 
             p.display()
-            popMatrix()   
-            
-        popMatrix() 
     
     
     def push(self, *ms):
@@ -50,10 +40,10 @@ class Cube:
     
     def move(self, *ms): 
         mmap = {
-                'L': (self.moveZ, -1, -1), 'M': (self.moveZ, 0, -1), 'R': (self.moveZ, 1, 1),
+                'L': (self.moveZ, -1, -1), 'M': (self.moveZ, 0, -1), 'R': (self.moveZ, 1,  1),
                 'U': (self.moveY, -1,  1), 'E': (self.moveY, 0, -1), 'D': (self.moveY, 1, -1),
-                'F': (self.moveX, -1,  1), 'S': (self.moveX, 0, -1), 'B': (self.moveX, 1, -1),
-                'X': (self.moveX,  2,  1), 'Y': (self.moveY, 2,  1), 'Z': (self.moveZ, 2,  1)
+                'F': (self.moveX, -1, -1), 'S': (self.moveX, 0, -1), 'B': (self.moveX, 1,  1),
+                'X': (self.moveZ,  2,  1), 'Y': (self.moveY, 2,  1), 'Z': (self.moveX, 2, -1)
                 }
         
         if self.moving or len(self.queue):
@@ -77,8 +67,8 @@ class Cube:
             if slice > 1 or p.x == slice:
                 t = PMatrix2D()
                 t.rotate(dir * HALF_PI)
-                t.translate(p.y, p.z)  
-                p.rX(self.rotate3.direction)  
+                t.translate(p.y, p.z)
+                p.rX(dir)
                 p.pos(round(p.x), round(t.m02), round(t.m12))
     
     
@@ -87,9 +77,9 @@ class Cube:
             if slice > 1 or p.y == slice:
                 t = PMatrix2D()
                 t.rotate(dir * HALF_PI)
-                t.translate(p.x, p.z)  
+                t.translate(p.x, p.z)
                 p.rY(dir)
-                p.pos(round(t.m02), round(p.y), round(t.m12)) 
+                p.pos(round(t.m02), round(p.y), round(t.m12))
     
     
     def moveZ(self, slice, dir=1):

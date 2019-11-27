@@ -29,7 +29,7 @@ class Piece:
         stroke(0)
         strokeWeight(sz // 10 or 1)
         noFill()
-        translate(sz * (x), sz * (y), sz * (z))  
+        translate(sz * x, sz * y, sz * z)
         box(sz)
         for s in self.stickers:
             s.display()
