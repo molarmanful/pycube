@@ -43,4 +43,3 @@ def keyPressed():
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':
             mod = "'" if key == key.upper() else ''
             CUBE.move(key.upper() + mod)
-            print(key.upper() + mod)
