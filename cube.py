@@ -6,7 +6,7 @@ from stack import Stack
 
 class Cube:
     
-    def __init__(self, sz=100, speed=.2):
+    def __init__(self, sz=100, speed=.3):
         
         self.sz = sz
         self.speed = speed

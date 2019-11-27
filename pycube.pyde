@@ -42,8 +42,12 @@ def keyPressed():
         CAM.reset(300)
         CUBE.mmode = not CUBE.mmode
         CAM.setActive(CUBE.mmode)
-    
-    if not CUBE.mmode: 
+        
+    if not CUBE.mmode:
+            
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':
             mod = "'" if key == key.upper() else ''
             CUBE.queue.add(key.upper() + mod)
+        
+        elif key == ' ' and not CUBE.moving:
+            CUBE.scramble()
