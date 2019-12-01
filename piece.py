@@ -1,6 +1,6 @@
 from sticker import Sticker
 
-
+#this class contains all individual cube pieces and all its attributes
 class Piece:
     
     def __init__(self, id, x, y, z, sz):
@@ -38,26 +38,26 @@ class Piece:
         popMatrix()
 
 
-    def pos(self, x, y, z):
+    def pos(self, x, y, z): #this function is used to update the position of each cube 
         
         self.x = x
         self.y = y
         self.z = z
         
         
-    def rX(self, dir):
+    def rX(self, dir): #rotate and translates cube pieces parallel to the x-axis 
         
         for s in self.stickers:
             s.rX(dir * HALF_PI)
         
         
-    def rY(self, dir):
+    def rY(self, dir): #rotate and translates cube pieces parallel to the y-axis
         
         for s in self.stickers:
             s.rY(dir * HALF_PI)
         
         
-    def rZ(self, dir):
+    def rZ(self, dir): #rotate and translates cube pieces parallel to the z-axis
         
         for s in self.stickers:
             s.rZ(dir * HALF_PI)
