@@ -3,7 +3,7 @@ from piece import Piece
 from anim import Anim
 from stack import Stack
 
-
+#this class represents each cube that makes up the Rubiks cube 
 class Cube:
     
     def __init__(self, sz=100, speed=.3):
@@ -23,7 +23,7 @@ class Cube:
                     self.pieces.append(Piece(id, x, y, z, self.sz))
                     id += 1
                     
-                    
+   #this function dsplays each cube piece and within it, the cubes are rotated            
     def display(self):
         
         a = self.anims.get(0)
@@ -44,7 +44,7 @@ class Cube:
             popMatrix()
     
         
-    def scramble(self, l=25):
+    def scramble(self, l=25): #this function is used to scrambble the cube randomly 
         
         a = ' '
         b = ' '
@@ -65,7 +65,7 @@ class Cube:
     
     
     def move(self, *ms):
-        
+        #mmap is a dictionary that contains all the possible cube movememnts and the parameters needed to rotate each cube successfully
         mmap = {
                 'L': (2, -1, -1), 'M': (2, 0, -1), 'R': (2, 1,  1),
                 'U': (1, -1, -1), 'E': (1, 0,  1), 'D': (1, 1,  1),
@@ -86,7 +86,7 @@ class Cube:
                 self.anims.add(Anim(self, axis, slice, dir, self.speed))
         
         
-    def anim(self):
+    def anim(self): #anim function enables the rotation to be seen in a 3d animated from
         
         if self.anims.get(0):
             if self.anims.get(0).done:
@@ -99,7 +99,7 @@ class Cube:
             self.move(self.queue.pop())
         
         
-    def moveX(self, slice, dir=1):
+    def moveX(self, slice, dir=1): #rotate and translates cube pieces parallel to the x-axis
         
         for p in self.pieces:
             if slice > 1 or p.x == slice:
@@ -110,7 +110,7 @@ class Cube:
                 p.pos(round(p.x), round(t.m02), round(t.m12))
     
     
-    def moveY(self, slice, dir=1):
+    def moveY(self, slice, dir=1): #rotate and translates cube pieces parallel to the y-axis
         
         for p in self.pieces:
             if slice > 1 or p.y == slice:
@@ -121,7 +121,7 @@ class Cube:
                 p.pos(round(t.m02), round(p.y), round(t.m12))
     
     
-    def moveZ(self, slice, dir=1):
+    def moveZ(self, slice, dir=1): #rotate and translates cube pieces parallel to the z-axis
         
         for p in self.pieces:
             if slice > 1 or p.z == slice:
