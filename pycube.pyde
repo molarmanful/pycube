@@ -1,12 +1,9 @@
 add_library('peasycam')
 from cube import Cube
 
-CUBE = Cube()
-CAM = None
-
 
 def setup():
-    global CAM
+    global CAM, CUBE
     
     fullScreen(P3D)
     
@@ -16,6 +13,8 @@ def setup():
     CAM.setResetOnDoubleClick(False)
     CAM.setCenterDragHandler(None)
     CAM.setActive(False)
+    
+    CUBE = Cube()
     
     
 def draw():

@@ -11,12 +11,12 @@ class Piece:
         self.z = z
         self.sz = sz
         self.stickers = [
-                         Sticker(-1, 0, 0, color(255, 0, 0), self.sz),
-                         Sticker(1, 0, 0, color(255, 156, 0), self.sz),
-                         Sticker(0, -1, 0, color(255, 255, 0), self.sz),
-                         Sticker(0, 1, 0, color(255, 255, 255), self.sz),
-                         Sticker(0, 0, -1, color(0, 0, 255), self.sz),
-                         Sticker(0, 0, 1, color(0, 255, 0), self.sz)
+                         Sticker(-1,  0,  0, color(255,   0,   0), self.sz),
+                         Sticker( 1,  0,  0, color(255, 156,   0), self.sz),
+                         Sticker( 0, -1,  0, color(255, 255,   0), self.sz),
+                         Sticker( 0,  1,  0, color(255, 255, 255), self.sz),
+                         Sticker( 0,  0, -1, color(  0,   0, 255), self.sz),
+                         Sticker( 0,  0,  1, color(  0, 255,   0), self.sz)
                          ]
         
         

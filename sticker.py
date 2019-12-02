@@ -1,7 +1,7 @@
 class Sticker:
     
     def __init__(self, x, y, z, c, sz):
-        
+    
         self.x = x
         self.y = y
         self.z = z
