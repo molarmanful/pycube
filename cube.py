@@ -6,8 +6,9 @@ from stack import Stack
 #this class represents each cube that makes up the Rubiks cube 
 class Cube:
     
-    def __init__(self, sz=100, speed=.3):
+    def __init__(self, colors, sz=100, speed=.3):
         
+        self.colors = colors
         self.sz = sz
         self.speed = speed
         self.pieces = []
@@ -20,7 +21,7 @@ class Cube:
         for x in range(-1, 2):
             for y in range(-1, 2):
                 for z in range(-1, 2):
-                    self.pieces.append(Piece(id, x, y, z, self.sz))
+                    self.pieces.append(Piece(id, colors, x, y, z, self.sz))
                     id += 1
                     
    #this function dsplays each cube piece and within it, the cubes are rotated            

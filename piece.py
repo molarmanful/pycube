@@ -3,7 +3,7 @@ from sticker import Sticker
 #this class contains all individual cube pieces and all its attributes
 class Piece:
     
-    def __init__(self, id, x, y, z, sz):
+    def __init__(self, id, colors, x, y, z, sz):
         
         self.id = id
         self.x = x
@@ -11,12 +11,12 @@ class Piece:
         self.z = z
         self.sz = sz
         self.stickers = [
-                         Sticker(-1,  0,  0, color(255,   0,   0), self.sz),
-                         Sticker( 1,  0,  0, color(255, 156,   0), self.sz),
-                         Sticker( 0, -1,  0, color(255, 255,   0), self.sz),
-                         Sticker( 0,  1,  0, color(255, 255, 255), self.sz),
-                         Sticker( 0,  0, -1, color(  0,   0, 255), self.sz),
-                         Sticker( 0,  0,  1, color(  0, 255,   0), self.sz)
+                         Sticker(-1,  0,  0, colors[0], self.sz),
+                         Sticker( 1,  0,  0, colors[1], self.sz),
+                         Sticker( 0, -1,  0, colors[2], self.sz),
+                         Sticker( 0,  1,  0, colors[3], self.sz),
+                         Sticker( 0,  0, -1, colors[4], self.sz),
+                         Sticker( 0,  0,  1, colors[5], self.sz)
                          ]
         
         

@@ -1,9 +1,19 @@
 add_library('peasycam')
 from cube import Cube
+from buffer import Buffer
+
+COLORS = [
+          color(255,   0,   0),
+          color(255, 156,   0),
+          color(255, 255,   0),
+          color(255, 255, 255),
+          color(  0,   0, 255),
+          color(  0, 255,   0)
+          ]
 
 
 def setup():
-    global CAM, CUBE
+    global CAM, BUF, BCAM, CUBE
     
     fullScreen(P3D)
     
@@ -14,7 +24,15 @@ def setup():
     CAM.setCenterDragHandler(None)
     CAM.setActive(False)
     
-    CUBE = Cube()
+    BUF = Buffer(COLORS)
+    BCAM = PeasyCam(this, BUF.buf, 1000)
+    BCAM.setMinimumDistance(1000)
+    BCAM.setMaximumDistance(1000)
+    BCAM.setResetOnDoubleClick(False)
+    BCAM.setCenterDragHandler(None)
+    BCAM.setActive(False)
+    
+    CUBE = Cube(COLORS)
     
     
 def draw():
@@ -25,6 +43,8 @@ def draw():
     CUBE.anim()
     CUBE.display()
     
+    BUF.update()
+    
     CAM.beginHUD()
     
     fill(0)
@@ -33,14 +53,25 @@ def draw():
     text(['keyboard', 'mouse'][CUBE.mmode] + ' mode', 3, 3)
     
     CAM.endHUD()
+    
 
+def mousePressed():
+    
+    if CUBE.mmode and not CUBE.moving:
+        p = BUF.getpixel()
+        
+        if p in COLORS:
+            mod = "'" if mouseButton == RIGHT else ''
+            CUBE.queue.add('FBUDLR'[COLORS.index(BUF.getpixel())] + mod)
 
 def keyPressed():
     
     if key == ENTER:
         CAM.reset(300)
+        BCAM.reset(300)
         CUBE.mmode = not CUBE.mmode
         CAM.setActive(CUBE.mmode)
+        BCAM.setActive(CUBE.mmode)
         
     if not CUBE.mmode:
             

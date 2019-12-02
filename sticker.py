@@ -21,7 +21,7 @@ class Sticker:
         noStroke()
         fill(self.c)
         rectMode(CENTER)
-        translate(x * sz / 2, y * sz / 2, z * sz / 2) 
+        translate(x * sz / 2, y * sz / 2, z * sz / 2)
         
         if x:
             rotateY(HALF_PI)
