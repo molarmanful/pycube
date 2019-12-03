@@ -3,42 +3,64 @@ from piece import Piece
 from anim import Anim
 from stack import Stack
 
-#this class represents each cube that makes up the Rubiks cube
+
 class Cube:
+    """Handles rendering and updating of the cube.
+
+    Args:
+        colors (:list:`int`): Color scheme in `FBUDLR` order.
+        sz (int): Size of each cube piece (default 100).
+        speed (int): Animation speed in radians per frame (default .3).
+
+    Attributes:
+        colors (:list:`int`): Color scheme in `FBUDLR` order.
+        sz (int): Size of each cube piece (default 100).
+        speed (int): Animation speed in radians per frame (default .3).
+        pieces (:list:`Piece`): Container for all cube pieces.
+        queue (:Stack:`str`): Queue for moves that need to be executed.
+        anims (:Stack:`Anim`): Queue for animations that need to be run.
+        mmode (bool): Whether mouse mode is on.
+        moving (bool): Whether the cube is currently animating.
+
+    """
 
     def __init__(self, colors, sz=100, speed=.3):
-
         self.colors = colors
         self.sz = sz
         self.speed = speed
         self.pieces = []
         self.queue = Stack()
         self.anims = Stack()
-        self.mmode = False
+        self.mmode = True
         self.moving = False
 
         id = 0
         for x in range(-1, 2):
             for y in range(-1, 2):
                 for z in range(-1, 2):
-                    self.pieces.append(Piece(id, colors, x, y, z, self.sz))
-                    id += 1
+                    if (x, y, z) != (0, 0, 0): # Remove the core piece.
+                        # Add pieces to pieces.
+                        self.pieces.append(Piece(id, colors, x, y, z, self.sz))
+                        id += 1
 
 
-   #this function dsplays each cube piece and within it, the cubes are rotated
     def display(self):
+        """Displays the cube.
+
+        This method is called during each `draw` call (see
+        `pycube.pyde`).
+        """
 
         a = self.anims.get(0)
         for p in self.pieces:
             pushMatrix()
 
             if a:
+                # Rotate slices to show current animation progress.
                 if a.axis == 2 and (a.slice > 1 or p.z == a.slice):
                     rotateZ(a.rot)
-
                 elif a.axis == 1 and (a.slice > 1 or p.y == a.slice):
                     rotateY(a.rot)
-
                 elif a.axis == 0 and (a.slice > 1 or p.x == a.slice):
                     rotateX(a.rot)
 
@@ -46,18 +68,44 @@ class Cube:
             popMatrix()
 
 
-    def solved(self):
+    def getpiece(self, x, y, z):
+        """Finds the piece with the given (x,y,z) coordinates.
 
-        ref = self.pieces[0].stickers
+        Args:
+            x (int): The x-coordinate.
+            y (int): The y-coordinate.
+            z (int): The z-coordinate.
+
+        Returns:
+            Piece: The found piece, or None if no piece matches the query.
+
+        """
+
         for p in self.pieces:
-            for i, s in enumerate(p.stickers):
-                if (s.x, s.y, s.z) != (ref[i].x, ref[i].y, ref[i].z):
-                    return False
+            if (p.x, p.y, p.z) == (x, y, z):
+                return p
+
+
+    def solved(self):
+        """Checks if the cube is solved.
+
+        Returns:
+            bool: True if solved, False otherwise.
+
+        """
+
+        for p in self.pieces:
+            if [p.x, p.y, p.z].count(0) < 2: # Filter out centers.
+                # Compare each sticker color with its respective center.
+                for i, s in enumerate(p.stickers):
+                    cen = self.getpiece(s.x, s.y, s.z).getsticker(s.x, s.y, s.z)
+                    if s.c != cen.c:
+                        return False
 
         return True
 
 
-    def scramble(self, l=25): #this function is used to scrambble the cube randomly
+    def scramble(self, l=25):
 
         a = ' '
         b = ' '
@@ -66,10 +114,8 @@ class Cube:
             choices = ['RL', 'UD', 'FB']
 
             for i, m in enumerate(choices):
-
                 if a in m:
                     choices[i] = m.replace(a, '')
-
                     if b in m:
                         choices[i] = ''
 

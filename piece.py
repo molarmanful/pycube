@@ -38,6 +38,13 @@ class Piece:
         popMatrix()
 
 
+    def getsticker(self, x, y, z):
+
+        for s in self.stickers:
+            if (s.x, s.y, s.z) == (x, y, z):
+                return s
+
+
     def pos(self, x, y, z): #this function is used to update the position of each cube
 
         self.x = x
