@@ -1,7 +1,23 @@
 class Sticker:
+    """Handles updating and rendering of stickers.
+
+    Args:
+        x (int): The x-coordinate of the sticker.
+        y (int): The y-coordinate of the sticker.
+        z (int): The z-coordinate of the sticker.
+        c (int): Sticker color.
+        sz (int): Sticker size.
+
+    Attributes:
+        x (int): The x-coordinate of the sticker.
+        y (int): The y-coordinate of the sticker.
+        z (int): The z-coordinate of the sticker.
+        c (int): Sticker color.
+        sz (int): Sticker size.
+
+    """
 
     def __init__(self, x, y, z, c, sz):
-
         self.x = x
         self.y = y
         self.z = z
@@ -10,6 +26,7 @@ class Sticker:
 
 
     def display(self):
+        """Displays the sticker."""
 
         x = self.x
         y = self.y
@@ -35,7 +52,12 @@ class Sticker:
 
 
     def rX(self, a):
+        """Alters sticker rotation and position along the X-axis.
 
+        Args:
+            a: Angle in radians.
+
+        """
         y = round(self.y * cos(a) - self.z * sin(a))
         z = round(self.y * sin(a) + self.z * cos(a))
         self.y = y
@@ -43,6 +65,12 @@ class Sticker:
 
 
     def rY(self, a):
+        """Alters sticker rotation and position along the Y-axis.
+
+        Args:
+            a: Angle in radians.
+
+        """
 
         x = round(self.x * cos(a) - self.z * sin(a))
         z = round(self.x * sin(a) + self.z * cos(a))
@@ -51,6 +79,12 @@ class Sticker:
 
 
     def rZ(self, a):
+        """Alters sticker rotation and position along the Z-axis.
+
+        Args:
+            a: Angle in radians.
+
+        """
 
         x = round(self.x * cos(a) - self.y * sin(a))
         y = round(self.x * sin(a) + self.y * cos(a))

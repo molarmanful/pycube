@@ -45,11 +45,7 @@ class Cube:
 
 
     def display(self):
-        """Displays the cube.
-
-        This method is called during each `draw` call (see
-        `pycube.pyde`).
-        """
+        """Displays the cube."""
 
         a = self.anims.get(0)
         for p in self.pieces:
@@ -71,15 +67,14 @@ class Cube:
     def getpiece(self, x, y, z):
         """Finds the piece with the given (x,y,z) coordinates.
 
-        Used in `Cube.solved` to find centers.
-
         Args:
             x (int): The x-coordinate.
             y (int): The y-coordinate.
             z (int): The z-coordinate.
 
         Returns:
-            Piece: The found piece, or None if no piece matches the query.
+            Piece: The found piece, or `None` if no piece matches the
+                query.
 
         """
 
@@ -158,8 +153,6 @@ class Cube:
 
     def move(self, *ms):
         """Parses cube notation into animations.
-
-        This method is called during `Cube.anim`.
 
         Args:
             *ms (`str`): Series of notated moves.

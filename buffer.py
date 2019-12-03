@@ -13,18 +13,13 @@ class Buffer:
     """
 
     def __init__(self, colors, sz=100):
-
         self.colors = colors
         self.sz = 100
         self.buf = createGraphics(width, height, P3D)
 
 
     def update(self):
-        """Draws the offscreen cube to match the actual cube.
-
-        This method is called alongside `Cube.display` (see `cube.py`)
-        during each `draw` call (see `pycube.pyde`).
-        """
+        """Draws the offscreen cube to match the actual cube."""
 
         colors = self.colors
         sz = self.sz
@@ -71,9 +66,6 @@ class Buffer:
 
     def getpixel(self, x, y):
         """Gets the pixel under the given (x,y) coordinates.
-
-        This function is called during each `mousePressed` call (see
-        `pycube.pyde`).
 
         Args:
             x (int): The x-coordinate.
