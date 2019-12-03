@@ -24,6 +24,7 @@ class Cube:
                     self.pieces.append(Piece(id, colors, x, y, z, self.sz))
                     id += 1
 
+
    #this function dsplays each cube piece and within it, the cubes are rotated
     def display(self):
 
@@ -43,6 +44,17 @@ class Cube:
 
             p.display()
             popMatrix()
+
+
+    def solved(self):
+
+        ref = self.pieces[0].stickers
+        for p in self.pieces:
+            for i, s in enumerate(p.stickers):
+                if (s.x, s.y, s.z) != (ref[i].x, ref[i].y, ref[i].z):
+                    return False
+
+        return True
 
 
     def scramble(self, l=25): #this function is used to scrambble the cube randomly
