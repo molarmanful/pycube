@@ -3,7 +3,7 @@ class Buffer:
 
     Args:
         colors (:list:`int`): 6 unique colors, 1 for each face.
-        sz (int): Size of each piece in the actual cube (default 100).
+        sz (int, optional): Size of each piece in the actual cube (default 100).
 
     Attributes:
         colors (:list:`int`): 6 unique colors, 1 for each face.
@@ -12,7 +12,7 @@ class Buffer:
 
     """
 
-    def __init__(self, colors, sz = 100):
+    def __init__(self, colors, sz=100):
 
         self.colors = colors
         self.sz = 100

@@ -7,7 +7,7 @@ class Anim:
         slice (int): Slice to be rotated (-1 <= n <= 1).
         dir (int): Direction of rotation (1 for clockwise, -1 for
             counterclockwise).
-        speed (float): Speed of rotation in radians per frame (default
+        speed (float, optional): Speed of rotation in radians per frame (default
             .3).
 
     Attributes:

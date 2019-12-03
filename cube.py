@@ -9,8 +9,8 @@ class Cube:
 
     Args:
         colors (:list:`int`): Color scheme in `FBUDLR` order.
-        sz (int): Size of each cube piece (default 100).
-        speed (int): Animation speed in radians per frame (default .3).
+        sz (int, optional): Size of each cube piece (default 100).
+        speed (int, optional): Animation speed in radians per frame (default .3).
 
     Attributes:
         colors (:list:`int`): Color scheme in `FBUDLR` order.
@@ -71,6 +71,8 @@ class Cube:
     def getpiece(self, x, y, z):
         """Finds the piece with the given (x,y,z) coordinates.
 
+        Used in `Cube.solved` to find centers.
+
         Args:
             x (int): The x-coordinate.
             y (int): The y-coordinate.
@@ -106,25 +108,65 @@ class Cube:
 
 
     def scramble(self, l=25):
+        """Scrambles the cube.
+
+        This implementation prevents degenerate cases (i.e. R L R) for
+        higher-quality scrambles. Moves are pushed to Cube.queue upon
+        generation.
+
+        Args:
+            l (int, optional): Length of the scramble (default 25).
+
+        """
 
         a = ' '
         b = ' '
-
         for i in range(l):
             choices = ['RL', 'UD', 'FB']
-
             for i, m in enumerate(choices):
                 if a in m:
+                    # Filter out parallel degeneracy (i.e. R L R).
                     choices[i] = m.replace(a, '')
                     if b in m:
+                        # Filter out duplicate degeneracy (i.e. R R).
                         choices[i] = ''
 
             b, a = a, random.choice(''.join(choices))
             self.queue.push(a + random.choice(["'", '2', '']))
 
 
+    def anim(self):
+        """Prioritizes actions based on the states of the queues.
+
+        This method is called during each `draw` call (see
+        `pycube.pyde`). It prioritizes animating from `Cube.anims`, then
+        clearing out moves from `Cube.queue`.
+        """
+
+        if self.anims.get(0):
+            if self.anims.get(0).done:
+                # Remove current animation when done.
+                self.anims.pop()
+            else:
+                # Progress current animation.
+                self.anims.get(0).step()
+
+        elif self.queue.get(0):
+            # Add queued moves to the animation queues.
+            self.move(self.queue.pop())
+
+
     def move(self, *ms):
-        #mmap is a dictionary that contains all the possible cube movememnts and the parameters needed to rotate each cube successfully
+        """Parses cube notation into animations.
+
+        This method is called during `Cube.anim`.
+
+        Args:
+            *ms (`str`): Series of notated moves.
+
+        """
+
+        # Map cube notation to corresponding clockwise movements.
         mmap = {
                 'L': (2, -1, -1), 'M': (2, 0, -1), 'R': (2, 1,  1),
                 'U': (1, -1, -1), 'E': (1, 0,  1), 'D': (1, 1,  1),
@@ -137,31 +179,29 @@ class Cube:
 
             if "'" in m:
                 self.anims.add(Anim(self, axis, slice, -dir, self.speed))
-
             elif '2' in m:
                 self.anims.add(Anim(self, axis, slice, dir, self.speed), Anim(self, axis, slice, dir, self.speed))
-
             else:
                 self.anims.add(Anim(self, axis, slice, dir, self.speed))
 
 
-    def anim(self): #anim function enables the rotation to be seen in a 3d animated from
+    def moveX(self, slice, dir=1):
+        """Alters cube state via unanimated X rotation.
 
-        if self.anims.get(0):
-            if self.anims.get(0).done:
-                self.anims.pop()
+        This method is called after an animation finishes. It affects
+        piece positions, translations, and rotations.
 
-            else:
-                self.anims.get(0).step()
+        Args:
+            slice (int): The slice to rotate. If slice is 2, then all
+                slices will rotate simultaneously.
+            dir (int, optional): Direction of rotation (1 for clockwise,
+                -1 for counterclockwise).
 
-        elif self.queue.get(0):
-            self.move(self.queue.pop())
-
-
-    def moveX(self, slice, dir=1): #rotate and translates cube pieces parallel to the x-axis
+        """
 
         for p in self.pieces:
-            if slice > 1 or p.x == slice:
+            if slice > 1 or p.x == slice: # Filter pieces not in slice.
+                # Use PMatrix2D() to calculate position from rotation.
                 t = PMatrix2D()
                 t.rotate(dir * HALF_PI)
                 t.translate(p.y, p.z)
@@ -169,10 +209,23 @@ class Cube:
                 p.pos(round(p.x), round(t.m02), round(t.m12))
 
 
-    def moveY(self, slice, dir=1): #rotate and translates cube pieces parallel to the y-axis
+    def moveY(self, slice, dir=1):
+        """Alters cube state via unanimated Y rotation.
 
-        for p in self.pieces:
+        This method is called after an animation finishes. It affects
+        piece positions, translations, and rotations.
+
+        Args:
+            slice (int): The slice to rotate. If slice is 2, then all
+                slices will rotate simultaneously.
+            dir (int, optional): Direction of rotation (1 for clockwise,
+                -1 for counterclockwise).
+
+        """
+
+        for p in self.pieces: # Filter pieces not in slice.
             if slice > 1 or p.y == slice:
+                # Use PMatrix2D() to calculate position from rotation.
                 t = PMatrix2D()
                 t.rotate(dir * HALF_PI)
                 t.translate(p.x, p.z)
@@ -180,10 +233,23 @@ class Cube:
                 p.pos(round(t.m02), round(p.y), round(t.m12))
 
 
-    def moveZ(self, slice, dir=1): #rotate and translates cube pieces parallel to the z-axis
+    def moveZ(self, slice, dir=1):
+        """Alters cube state via unanimated Z rotation.
 
-        for p in self.pieces:
+        This method is called after an animation finishes. It affects
+        piece positions, translations, and rotations.
+
+        Args:
+            slice (int): The slice to rotate. If slice is 2, then all
+                slices will rotate simultaneously.
+            dir (int, optional): Direction of rotation (1 for clockwise,
+                -1 for counterclockwise).
+
+        """
+
+        for p in self.pieces: # Filter pieces not in slice.
             if slice > 1 or p.z == slice:
+                # Use PMatrix2D() to calculate position from rotation.
                 t = PMatrix2D()
                 t.rotate(dir * HALF_PI)
                 t.translate(p.x, p.y)

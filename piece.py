@@ -1,6 +1,6 @@
 from sticker import Sticker
 
-#this class contains all individual cube pieces and all its attributes
+
 class Piece:
 
     def __init__(self, id, colors, x, y, z, sz):
