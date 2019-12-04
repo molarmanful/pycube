@@ -76,8 +76,8 @@ class Piece:
             z (int): The z-coordinate.
 
         Returns:
-            Sticker: The found sticker, or `None` if no sticker matches
-                the query.
+            The found :py:class:`sticker.Sticker`, or `None` if no
+            sticker matches the query.
         """
 
         for s in self.stickers:

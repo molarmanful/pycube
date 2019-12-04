@@ -76,8 +76,8 @@ class Cube:
             z (int): The z-coordinate.
 
         Returns:
-            :py:class:`piece.Piece`: The found piece, or `None` if no
-                piece matches the query.
+            The found :py:class:`piece.Piece`, or `None` if no piece
+            matches the query.
 
         """
 
