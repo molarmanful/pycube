@@ -2,7 +2,7 @@ class Stack:
     """A custom datatype with both LIFO and FIFO support.
 
     Attributes:
-        items (:list:): Items stored in the stack (top of the stack is
+        items (:obj:`list`): Items stored in the stack (top of the stack is
             `items[0]`).
 
     """

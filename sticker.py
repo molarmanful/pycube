@@ -55,7 +55,7 @@ class Sticker:
         """Alters sticker rotation and position along the X-axis.
 
         Args:
-            a: Angle in radians.
+            a (float): Angle in radians.
 
         """
         y = round(self.y * cos(a) - self.z * sin(a))
@@ -68,7 +68,7 @@ class Sticker:
         """Alters sticker rotation and position along the Y-axis.
 
         Args:
-            a: Angle in radians.
+            a (float): Angle in radians.
 
         """
 
@@ -82,7 +82,7 @@ class Sticker:
         """Alters sticker rotation and position along the Z-axis.
 
         Args:
-            a: Angle in radians.
+            a (float): Angle in radians.
 
         """
 

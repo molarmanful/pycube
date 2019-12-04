@@ -2,11 +2,11 @@ class Buffer:
     """Creates an offscreen cube for color-based click detection.
 
     Args:
-        colors (:list:`int`): 6 unique colors, 1 for each face.
+        colors (:obj:`list` of int): 6 unique colors, 1 for each face.
         sz (int, optional): Size of each piece in the actual cube (default 100).
 
     Attributes:
-        colors (:list:`int`): 6 unique colors, 1 for each face.
+        colors (:obj:`list` of int): 6 unique colors, 1 for each face.
         sz (int): Size of each piece in the actual cube (default 100).
         buf (PGraphics): Renderer for the offscreen cube.
 

@@ -7,7 +7,7 @@ class Piece:
     Args:
         id (int): Unique identifier for the piece assigned by a parent
             cube.
-        colors (:list:`int`): Color scheme in `FBUDLR` order.
+        colors (:obj:`list` of int): Color scheme in `FBUDLR` order.
         x (int): The x-coordinate of the piece.
         y (int): The y-coordinate of the piece.
         z (int): The z-coordinate of the piece.
@@ -16,12 +16,12 @@ class Piece:
     Attributes:
         id (int): Unique identifier for the piece assigned by a parent
             cube.
-        colors (:list:`int`): Color scheme in `FBUDLR` order.
+        colors (:obj:`list` of int): Color scheme in `FBUDLR` order.
         x (int): The x-coordinate of the piece.
         y (int): The y-coordinate of the piece.
         z (int): The z-coordinate of the piece.
         sz (int): Size of the piece.
-        stickers (:list:`Sticker`): Set of stickers on the piece.
+        stickers (:obj:`list` of :obj:`Sticker`): Set of stickers on the piece.
 
     """
 

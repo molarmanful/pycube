@@ -8,17 +8,17 @@ class Cube:
     """Handles rendering and updating of the cube.
 
     Args:
-        colors (:list:`int`): Color scheme in `FBUDLR` order.
+        colors (:obj:`list` of int): Color scheme in `FBUDLR` order.
         sz (int, optional): Size of each cube piece (default 100).
         speed (int, optional): Animation speed in radians per frame (default .3).
 
     Attributes:
-        colors (:list:`int`): Color scheme in `FBUDLR` order.
+        colors (:obj:`list` of int): Color scheme in `FBUDLR` order.
         sz (int): Size of each cube piece (default 100).
         speed (int): Animation speed in radians per frame (default .3).
-        pieces (:list:`Piece`): Container for all cube pieces.
-        queue (:Stack:`str`): Queue for moves that need to be executed.
-        anims (:Stack:`Anim`): Queue for animations that need to be run.
+        pieces (:obj:`list` of :obj:`Piece`): Container for all cube pieces.
+        queue (:obj:`Stack` of str): Queue for moves that need to be executed.
+        anims (:obj:`Stack`of :obj:`Anim`): Queue for animations that need to be run.
         mmode (bool): Whether mouse mode is on.
         moving (bool): Whether the cube is currently animating.
 
