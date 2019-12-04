@@ -5,12 +5,12 @@ Welcome to pycube's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   anim
-   buffer
-   cube
-   piece
-   stack
-   sticker
+   source/anim
+   source/buffer
+   source/cube
+   source/piece
+   source/stack
+   source/sticker
 
 
 
