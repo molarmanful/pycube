@@ -16,9 +16,12 @@ class Cube:
         colors (:obj:`list` of int): Color scheme in `FBUDLR` order.
         sz (int): Size of each cube piece (default 100).
         speed (int): Animation speed in radians per frame (default .3).
-        pieces (:obj:`list` of :obj:`Piece`): Container for all cube pieces.
-        queue (:obj:`Stack` of str): Queue for moves that need to be executed.
-        anims (:obj:`Stack`of :obj:`Anim`): Queue for animations that need to be run.
+        pieces (:obj:`list` of :obj:`piece.Piece`): Container for all
+            cube pieces.
+        queue (:py:class:`stack.Stack` of str): Queue for moves that
+            need to be executed.
+        anims (:py:class:`stack.Stack` of :py:class:`anim.Anim`): Queue
+            for animations that need to be run.
         mmode (bool): Whether mouse mode is on.
         moving (bool): Whether the cube is currently animating.
 
@@ -73,8 +76,8 @@ class Cube:
             z (int): The z-coordinate.
 
         Returns:
-            Piece: The found piece, or `None` if no piece matches the
-                query.
+            :py:class:`piece.Piece`: The found piece, or `None` if no
+                piece matches the query.
 
         """
 
@@ -134,8 +137,9 @@ class Cube:
         """Prioritizes actions based on the states of the queues.
 
         This method is called during each `draw` call (see
-        `pycube.pyde`). It prioritizes animating from `Cube.anims`, then
-        clearing out moves from `Cube.queue`.
+        `pycube.pyde`). It prioritizes animating from
+        :py:attr:`cube.Cube.anims`, then clearing out moves from
+        :py:attr:`cube.Cube.queue`.
         """
 
         if self.anims.get(0):
@@ -155,7 +159,7 @@ class Cube:
         """Parses cube notation into animations.
 
         Args:
-            *ms (`str`): Series of notated moves.
+            *ms: Series of notated moves.
 
         """
 

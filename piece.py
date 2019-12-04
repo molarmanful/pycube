@@ -21,7 +21,8 @@ class Piece:
         y (int): The y-coordinate of the piece.
         z (int): The z-coordinate of the piece.
         sz (int): Size of the piece.
-        stickers (:obj:`list` of :obj:`Sticker`): Set of stickers on the piece.
+        stickers (:obj:`list` of :obj:`sticker.Sticker`): Set of
+            stickers on the piece.
 
     """
 
@@ -44,8 +45,8 @@ class Piece:
     def display(self):
         """Displays the piece.
 
-        This method is called inside `Cube.display` during each `draw`
-        call (see `pycube.pyde`).
+        This method is called inside :py:meth:`cube.Cube.display`
+        during each `draw` call (see `pycube.pyde`).
         """
 
         sz = self.sz
@@ -87,8 +88,8 @@ class Piece:
     def pos(self, x, y, z):
         """Changes the piece position to the given (x,y,z) coordinates.
 
-        Used in `Cube.moveX`, `Cube.moveY`, and `Cube.moveZ` to update
-        each piece's position.
+        Used in :py:meth:`cube.Cube.moveX`, :py:meth:`cube.Cube.moveY`,
+        and :py:meth:`cube.Cube.moveZ` to update each piece's position.
 
         Args:
             x (int): The x-coordinate.
@@ -105,7 +106,8 @@ class Piece:
     def rX(self, dir):
         """Rotates each sticker along the X axis.
 
-        Used in `Cube.moveX` to update each piece's rotation.
+        Used in :py:meth:`cube.Cube.moveX` to update each piece's
+        rotation.
 
         Args:
             dir (int): Direction of rotation (1 for clockwise, -1 for
@@ -120,7 +122,8 @@ class Piece:
     def rY(self, dir):
         """Rotates each sticker along the Y axis.
 
-        Used in `Cube.moveY` to update each piece's rotation.
+        Used in :py:meth:`cube.Cube.moveY` to update each piece's
+        rotation.
 
         Args:
             dir (int): Direction of rotation (1 for clockwise, -1 for
@@ -135,7 +138,8 @@ class Piece:
     def rZ(self, dir):
         """Rotates each sticker along the Y axis.
 
-        Used in `Cube.moveZ` to update each piece's rotation.
+        Used in :py:meth:`cube.Cube.moveZ` to update each piece's
+        rotation.
 
         Args:
             dir (int): Direction of rotation (1 for clockwise, -1 for
