@@ -52,7 +52,7 @@ class Anim:
             if abs(self.rot) > HALF_PI:
                 # Stop the rotation animation.
                 self.rot = 0
-                self.ing = False 
+                self.ing = False
                 self.done = True
                 self.cube.moving = False
 
