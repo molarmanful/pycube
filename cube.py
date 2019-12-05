@@ -23,7 +23,7 @@ class Cube:
         anims (:py:class:`stack.Stack` of :py:class:`anim.Anim`): Queue
             for animations that need to be run.
         mmode (bool): Whether mouse mode is on.
-        moving (bool): Whether the cube is currently animating.
+        moving (bool): Whether the cube is currently animating. 
 
     """
 
@@ -32,8 +32,9 @@ class Cube:
         self.sz = sz
         self.speed = speed
         self.pieces = []
-        self.queue = Stack()
-        self.anims = Stack()
+        self.queue = Stack() 
+        self.solve_queue = Stack() 
+        self.anims = Stack() 
         self.mmode = True
         self.moving = False
 
@@ -49,8 +50,11 @@ class Cube:
 
     def display(self):
         """Displays the cube."""
+        if self.solved():
+            self.queue.items = [] 
 
-        a = self.anims.get(0)
+            
+        a = self.anims.get(0) 
         for p in self.pieces:
             pushMatrix()
 
@@ -64,11 +68,11 @@ class Cube:
                     rotateX(a.rot)
 
             p.display()
-            popMatrix()
-
+            popMatrix() 
+            
 
     def getpiece(self, x, y, z):
-        """Finds the piece with the given (x,y,z) coordinates.
+        """Finds the piece with the given (x,y,z) coordinates. 
 
         Args:
             x (int): The x-coordinate.
@@ -100,7 +104,7 @@ class Cube:
                 for i, s in enumerate(p.stickers):
                     cen = self.getpiece(s.x, s.y, s.z).getsticker(s.x, s.y, s.z)
                     if s.c != cen.c:
-                        return False
+                        return False 
 
         return True
 
@@ -118,20 +122,21 @@ class Cube:
         """
 
         a = ' '
-        b = ' '
+        b = ' '  
         for i in range(l):
-            choices = ['RL', 'UD', 'FB']
+            choices = ['RL', 'UD', 'FB'] 
             for i, m in enumerate(choices):
                 if a in m:
                     # Filter out parallel degeneracy (i.e. R L R).
-                    choices[i] = m.replace(a, '')
+                    choices[i] = m.replace(a, '') 
                     if b in m:
                         # Filter out duplicate degeneracy (i.e. R R).
                         choices[i] = ''
-
-            b, a = a, random.choice(''.join(choices))
-            self.queue.push(a + random.choice(["'", '2', '']))
-
+        
+            b, a = a, random.choice(''.join(choices)) 
+            rand = a + random.choice(["'", '2', '']) 
+            self.queue.add(rand)  
+    
 
     def anim(self):
         """Prioritizes actions based on the states of the queues.
@@ -150,7 +155,7 @@ class Cube:
                 # Progress current animation.
                 self.anims.get(0).step()
 
-        elif self.queue.get(0):
+        elif self.queue.get(0): 
             # Add queued moves to the animation queues.
             self.move(self.queue.pop())
 
@@ -161,27 +166,55 @@ class Cube:
         Args:
             *ms: Series of notated moves.
 
-        """
+        """ 
 
         # Map cube notation to corresponding clockwise movements.
         mmap = {
-                'L': (2, -1, -1), 'M': (2, 0, -1), 'R': (2, 1,  1),
+                'L': (2, -1, -1), 'M': (2, 0, -1), 'R': (2, 1,  1), 
                 'U': (1, -1, -1), 'E': (1, 0,  1), 'D': (1, 1,  1),
                 'F': (0, -1, -1), 'S': (0, 0, -1), 'B': (0, 1,  1),
-                'X': (2,  2,  1), 'Y': (1, 2, -1), 'Z': (0, 2, -1)
-                }
-
-        for m in ms:
+                'X': (2,  2,  1), 'Y': (1, 2, -1), 'Z': (0, 2, -1) 
+                } 
+        
+        for m in ms: 
             axis, slice, dir = mmap[m[0].upper()]
-
             if "'" in m:
                 self.anims.add(Anim(self, axis, slice, -dir, self.speed))
             elif '2' in m:
                 self.anims.add(Anim(self, axis, slice, dir, self.speed), Anim(self, axis, slice, dir, self.speed))
             else:
-                self.anims.add(Anim(self, axis, slice, dir, self.speed))
-
-
+                self.anims.add(Anim(self, axis, slice, dir, self.speed)) 
+            self.solver(m) 
+    
+    def solver(self,ms): 
+            if len(ms) == 1: 
+                for m in ms: 
+                    self.solve_queue.push(str(m)+"'")  
+                
+            elif len(ms) == 2:
+                if ms[1] == '2': 
+                    for i in range(int(ms[1])): 
+                        self.solve_queue.push(str(ms[0])+"'") 
+                elif ms[1] == "'":
+                    self.solve_queue.push(str(ms[0]))  
+                
+            elif len(ms) == 3:
+                for i in range(int(ms[2])):
+                    self.solve_queue.push(str(ms[0])) 
+                    
+    def solve(self):
+        if self.solved(): 
+            self.solve_queue.items = [] 
+            return
+        else:
+            self.queue.push(*self.solve_queue.items[-1::-1]) 
+            self.solve_queue.items = []  
+            
+        
+         
+    
+        
+        
     def moveX(self, slice, dir=1):
         """Alters cube state via unanimated X rotation.
 
