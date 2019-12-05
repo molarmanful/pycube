@@ -52,7 +52,7 @@ class Anim:
             if abs(self.rot) > HALF_PI:
                 # Stop the rotation animation.
                 self.rot = 0
-                self.ing = False 
+                self.ing = False
                 self.done = True
                 self.cube.moving = False
 
@@ -66,5 +66,3 @@ class Anim:
                     self.cube.moveY(self.slice, -self.dir)
                 else:
                     self.cube.moveX(self.slice, self.dir)
-
-                print(self.cube.solved())

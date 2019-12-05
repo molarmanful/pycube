@@ -1,4 +1,3 @@
-
 class Stack:
     """A custom datatype with both LIFO and FIFO support.
 
@@ -9,7 +8,7 @@ class Stack:
     """
 
     def __init__(self):
-        self.items = [] 
+        self.items = []
 
 
     def push(self, *ms):
@@ -21,10 +20,10 @@ class Stack:
         """
 
         for m in ms:
-            self.items.insert(0, m) 
+            self.items.insert(0, m)
 
 
-    def add(self, *ms): 
+    def add(self, *ms):
         """Pushes items to the bottom of the stack.
 
         Args:
@@ -32,12 +31,12 @@ class Stack:
 
         """
 
-        self.items.extend(ms) 
-            
+        self.items.extend(ms)
+
 
 
     def pop(self):
-        """Removes the top of the stack. 
+        """Removes the top of the stack.
 
         Returns:
             The popped item.
@@ -46,8 +45,8 @@ class Stack:
         return self.items.pop(0)
 
 
-    def get(self, i): 
-        """Retrieves a stack item by index. 
+    def get(self, i):
+        """Retrieves a stack item by index.
 
         Args:
             i (int): The index.
@@ -58,5 +57,5 @@ class Stack:
         """
 
         if len(self.items) > i:
-            return self.items[i] 
-    
+            return self.items[i]
+
