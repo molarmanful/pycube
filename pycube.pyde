@@ -38,6 +38,7 @@ def setup():
     CAM.setMaximumDistance(1000)
     CAM.setResetOnDoubleClick(False)
     CAM.setCenterDragHandler(None)
+    CAM.setActive(True)
 
     # Initialize the buffer.
     BUF = Buffer(COLORS)
@@ -77,7 +78,7 @@ def draw():
 
 def mousePressed():
 
-    if CUBE.mmode and not CUBE.moving:
+    if CUBE.mmode and CUBE.free():
         # Use the buffer to find the proper face to move.
         p = BUF.getpixel(mouseX, mouseY)
         if p in COLORS:
@@ -92,10 +93,9 @@ def keyPressed():
         BCAM.reset(300)
         CUBE.mmode = not CUBE.mmode
         CAM.setActive(CUBE.mmode)
-        BCAM.setActive(CUBE.mmode)
 
     elif CUBE.free():
-        if key == 'w':
+        if key == TAB:
             CUBE.solve()
         elif key == ' ':
             CUBE.scramble()

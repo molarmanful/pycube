@@ -24,6 +24,7 @@ class Cube:
             for animations that need to be run.
         mmode (bool): Whether mouse mode is on.
         moving (bool): Whether the cube is currently animating.
+        solving (bool): Whether the cube is currently solving.
 
     """
 
@@ -35,7 +36,7 @@ class Cube:
         self.queue = Stack()
         self.moved = Stack()
         self.anims = Stack()
-        self.mmode = True
+        self.mmode = False
         self.moving = False
         self.solving = False
 
@@ -89,6 +90,12 @@ class Cube:
 
 
     def free(self):
+        """Checks if the cube is idle and able to be acted upon.
+
+        Returns:
+            bool: True if idle, False otherwise.
+
+        """
 
         return not self.moving and not self.queue.get(0) and not self.anims.get(0)
 
@@ -193,10 +200,12 @@ class Cube:
                 self.anims.add(Anim(self, axis, slice, dir, self.speed))
                 m = m + "'"
 
+            # Push inverse move to history queue.
             self.moved.push(m)
 
 
     def solve(self):
+        """Rewinds the cube to a solved state."""
 
         self.queue.add(*self.moved.items)
         self.solving = True
