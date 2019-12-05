@@ -13,7 +13,7 @@ Todo:
 
 add_library('peasycam')
 from cube import Cube
-from buffer import Buffer
+from buffer import Buffer 
 
 # Color order is FBUDLR.
 COLORS = [
@@ -50,7 +50,7 @@ def setup():
     BCAM.setCenterDragHandler(None)
 
     # Initialize the cube.
-    CUBE = Cube(COLORS)
+    CUBE = Cube(COLORS)  
 
 
 def draw():
@@ -58,33 +58,34 @@ def draw():
     background(255)
     rotateX(-HALF_PI / 3)
     rotateY(HALF_PI * 2 / 3)
+    
 
     # Update both cube and buffer.
-    CUBE.anim()
-    CUBE.display()
-    BUF.update()
-
-    CAM.beginHUD()
+    CUBE.anim() 
+    CUBE.display() 
+    BUF.update()  
+    
+    CAM.beginHUD() 
 
     fill(0)
     textSize(20)
     textAlign(LEFT, TOP)
-    text(['keyboard', 'mouse'][CUBE.mmode] + ' mode', 3, 3)
+    text(['keyboard', 'mouse'][CUBE.mmode] + ' mode', 3, 3) 
 
     CAM.endHUD()
 
 
-def mousePressed():
+def mousePressed(): 
 
     if CUBE.mmode and not CUBE.moving:
         # Use the buffer to find the proper face to move.
         p = BUF.getpixel(mouseX, mouseY)
         if p in COLORS:
             mod = "'" if mouseButton == RIGHT else ''
-            CUBE.queue.add('FBUDLR'[COLORS.index(p)] + mod)
+            CUBE.queue.add('FBUDLR'[COLORS.index(p)] + mod)  
 
 def keyPressed():
-
+        
     if key == ENTER:
         # Switch between mouse and keyboard modes.
         CAM.reset(300)
@@ -94,7 +95,12 @@ def keyPressed():
         BCAM.setActive(CUBE.mmode)
 
     if not CUBE.mmode:
-
+        if key == ' ': 
+            CUBE.solve() 
+            return 
+        if key == "w":
+            CUBE.scramble() 
+            return 
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':
             # Execute moves based on keys (SHIFT reverses direction).
             mod = "'" if key == key.upper() else ''
