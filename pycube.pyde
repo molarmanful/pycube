@@ -38,7 +38,7 @@ def setup():
     CAM.setMaximumDistance(1000)
     CAM.setResetOnDoubleClick(False)
     CAM.setCenterDragHandler(None)
-    CAM.setActive(True)
+    CAM.setActive(False)
 
     # Initialize the buffer.
     BUF = Buffer(COLORS)
@@ -49,6 +49,7 @@ def setup():
     BCAM.setMaximumDistance(1000)
     BCAM.setResetOnDoubleClick(False)
     BCAM.setCenterDragHandler(None)
+    BCAM.setActive(False)
 
     # Initialize the cube.
     CUBE = Cube(COLORS)
@@ -71,7 +72,8 @@ def draw():
     fill(0)
     textSize(20)
     textAlign(LEFT, TOP)
-    text(['keyboard', 'mouse'][CUBE.mmode] + ' mode', 3, 3)
+    text('MODE: ' + ['keyboard', 'mouse'][CUBE.mmode], 3, 3)
+    text('TIME: ' + str(CUBE.timer.times), 3, 30)
 
     CAM.endHUD()
 
@@ -93,12 +95,26 @@ def keyPressed():
         BCAM.reset(300)
         CUBE.mmode = not CUBE.mmode
         CAM.setActive(CUBE.mmode)
+        BCAM.setActive(CUBE.mmode)
 
     elif CUBE.free():
+
         if key == TAB:
+            # Press TAB to auto-solve the cube.
+            if CUBE.timing:
+                # Disqualify any timings if auto-solve runs.
+                if CUBE.timer.ing:
+                    CUBE.timer.times[-1] = 'DNF'
+                else:
+                    CUBE.timer.times.append('DNF')
+                CUBE.timer.end()
+                CUBE.timing = False
+
             CUBE.solve()
-        elif key == ' ':
-            CUBE.scramble()
+
+        elif key == ' ' and not CUBE.timing:
+            # Press SPACEBAR to begin a time attempt.
+            CUBE.time()
 
     if not CUBE.mmode:
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':

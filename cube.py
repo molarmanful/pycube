@@ -2,6 +2,7 @@ import random
 from piece import Piece
 from anim import Anim
 from stack import Stack
+from timer import Timer
 
 
 class Cube:
@@ -20,11 +21,16 @@ class Cube:
             cube pieces.
         queue (:py:class:`stack.Stack` of str): Queue for moves that
             need to be executed.
+        moved (:py:class:`stack.Stack` of str): Queue for inverses of
+            previously executed moves.
         anims (:py:class:`stack.Stack` of :py:class:`anim.Anim`): Queue
             for animations that need to be run.
+        timer (:py:class:`timer.Timer`): The timer assigned to the cube.
+        timing (bool): Whether a timed attempt is in progress.
         mmode (bool): Whether mouse mode is on.
         moving (bool): Whether the cube is currently animating.
         solving (bool): Whether the cube is currently solving.
+        scrambling (bool): Whether the cube is currently scrambling.
 
     """
 
@@ -36,9 +42,12 @@ class Cube:
         self.queue = Stack()
         self.moved = Stack()
         self.anims = Stack()
+        self.timer = Timer()
+        self.timing = False
         self.mmode = False
         self.moving = False
         self.solving = False
+        self.scrambling = False
 
         id = 0
         for x in range(-1, 2):
@@ -68,6 +77,38 @@ class Cube:
 
             p.display()
             popMatrix()
+
+
+    def anim(self):
+        """Prioritizes actions based on the states of the cube's attributes."""
+
+        if self.anims.get(0):
+            if self.anims.get(0).done:
+                # Remove current animation when done.
+                self.anims.pop()
+            else:
+                # Progress current animation.
+                self.anims.get(0).step()
+
+        elif self.solving and self.solved():
+            # Reset cube after `Cube.solve()`.
+            self.queue.items = []
+            self.solving = False
+
+        elif self.queue.get(0):
+            if self.timing and not self.scrambling and not self.timer.ing:
+                # Start the timer after scrambling.
+                self.timer.start()
+
+            # Add queued moves to the animation queues.
+            self.move(self.queue.pop())
+
+        elif self.timer.ing and self.solved():
+            # Stop the timer.
+            self.timer.end()
+            self.timing = False
+
+        self.timer.update()
 
 
     def getpiece(self, x, y, z):
@@ -119,6 +160,13 @@ class Cube:
         return True
 
 
+    def time(self):
+        """Sets up a timed solving attempt."""
+
+        self.timing = True
+        self.scramble()
+
+
     def scramble(self, l=25):
         """Scrambles the cube.
 
@@ -130,6 +178,8 @@ class Cube:
             l (int, optional): Length of the scramble (default 25).
 
         """
+
+        self.scrambling = True
 
         a = ' '
         b = ' '
@@ -146,31 +196,8 @@ class Cube:
             b, a = a, random.choice(''.join(choices))
             self.queue.add(a + random.choice(["'", '2', '']))
 
-
-    def anim(self):
-        """Prioritizes actions based on the states of the queues.
-
-        This method is called during each `draw` call (see
-        `pycube.pyde`). It prioritizes animating from
-        :py:attr:`cube.Cube.anims`, then clearing out moves from
-        :py:attr:`cube.Cube.queue`.
-        """
-
-        if self.anims.get(0):
-            if self.anims.get(0).done:
-                # Remove current animation when done.
-                self.anims.pop()
-            else:
-                # Progress current animation.
-                self.anims.get(0).step()
-
-        elif self.solving and self.solved():
-            self.queue.items = []
-            self.solving = False
-
-        elif self.queue.get(0):
-            # Add queued moves to the animation queues.
-            self.move(self.queue.pop())
+        # Add a '#' to the move queue as a special indicator.
+        self.queue.add('#')
 
 
     def move(self, *ms):
@@ -190,18 +217,24 @@ class Cube:
                 }
 
         for m in ms:
-            axis, slice, dir = mmap[m[0].upper()]
-            if "'" in m:
-                self.anims.add(Anim(self, axis, slice, -dir, self.speed))
-                m = m.replace("'", '')
-            elif '2' in m:
-                self.anims.add(Anim(self, axis, slice, dir, self.speed), Anim(self, axis, slice, dir, self.speed))
+            if m == '#':
+                # End the scramble if '#' is found.
+                self.scrambling = False
             else:
-                self.anims.add(Anim(self, axis, slice, dir, self.speed))
-                m = m + "'"
+                axis, slice, dir = mmap[m[0].upper()]
+                if "'" in m:
+                    # Invert the move.
+                    self.anims.add(Anim(self, axis, slice, -dir, self.speed))
+                    m = m.replace("'", '')
+                elif '2' in m:
+                    # Double the move.
+                    self.anims.add(Anim(self, axis, slice, dir, self.speed), Anim(self, axis, slice, dir, self.speed))
+                else:
+                    self.anims.add(Anim(self, axis, slice, dir, self.speed))
+                    m = m + "'"
 
-            # Push inverse move to history queue.
-            self.moved.push(m)
+                # Push inverse move to history queue.
+                self.moved.push(m)
 
 
     def solve(self):
