@@ -73,7 +73,7 @@ def draw():
     textSize(20)
     textAlign(LEFT, TOP)
     text('MODE: ' + ['keyboard', 'mouse'][CUBE.mmode], 3, 3)
-    text('TIME: ' + str(CUBE.timer.times), 3, 30)
+    text('TIMES: ' + ', '.join(map(str, CUBE.timer.times)), 3, 30)
 
     CAM.endHUD()
 
