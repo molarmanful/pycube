@@ -50,8 +50,10 @@ class Cube:
         self.solving = False
         self.scrambling = False
         self.timefile = File() 
-        self.timefile.create_file()  
-        print('created file') 
+        self.timefile.create_file()   
+        self.dispm1 = False 
+        self.dispm2 = False 
+    
 
         id = 0
         for x in range(-1, 2):
@@ -112,7 +114,17 @@ class Cube:
             self.timer.end()
             self.timing = False
             last = self.timer.times 
-            self.timefile.s_times.append(str(last[len(last)-1]))
+    
+            if self.user_solved() and not self.highscore():
+                self.dispm1 = True
+                self.dispm2 = False 
+                self.timefile.time_w = False
+            elif self.user_solved and self.highscore():
+                self.dispm2 = True
+                self.dispm1 = False 
+                self.timefile.time_w = False 
+                
+            self.timefile.s_times.append(str(last[len(last)-1])) 
 
         self.timer.update()
 
@@ -164,7 +176,19 @@ class Cube:
                         return False
 
         return True
-
+    
+    def user_solved(self):
+        if self.solved and self.timefile.time_w:
+            return True
+        return False 
+    
+    def highscore(self): 
+        time = self.timer.times[len(self.timer.times)-1] 
+        for i in self.timefile.s_times: 
+            if float(i) < float(time):  
+                return False
+        return True  
+            
 
     def time(self):
         """Sets up a timed solving attempt."""
@@ -172,6 +196,7 @@ class Cube:
         self.timing = True
         self.scramble()
         self.timefile.time_w = True 
+        self.dispm1, self.dispm2 = False, False 
 
 
     def scramble(self, l=1): 

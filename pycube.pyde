@@ -66,6 +66,8 @@ def draw():
     CUBE.anim()
     CUBE.display()
     BUF.update()
+    
+    
 
     CAM.beginHUD()
 
@@ -76,12 +78,32 @@ def draw():
     text('TIMES: ' + ', '.join(map(str, CUBE.timer.times)), 3, 30)
 
     CAM.endHUD() 
+    
+    if CUBE.dispm1: 
+        message(1)  
+    elif CUBE.dispm2:  
+        message(2) 
 
 
 def stop():
     CUBE.timefile.to_file() 
-    print('closed file') 
-
+    
+def message(mesg): 
+    if mesg == 1:
+        CAM.beginHUD() 
+        fill(0)
+        textSize(30)
+        textAlign(RIGHT, TOP) 
+        text("You solved the cube!", (6*width)/10, 10)
+        CAM.endHUD() 
+    else:
+        CAM.beginHUD() 
+        fill(0)
+        textSize(30) 
+        textAlign(RIGHT, TOP)
+        text("You solved the cube! Best Time!!", (6*width)/10, 10)  
+        CAM.endHUD() 
+        
 def mousePressed():
 
     if CUBE.mmode and CUBE.free():
