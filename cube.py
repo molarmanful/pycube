@@ -3,6 +3,7 @@ from piece import Piece
 from anim import Anim
 from stack import Stack
 from timer import Timer
+from filehandle import File 
 
 
 class Cube:
@@ -48,6 +49,9 @@ class Cube:
         self.moving = False
         self.solving = False
         self.scrambling = False
+        self.timefile = File() 
+        self.timefile.create_file()  
+        print('created file') 
 
         id = 0
         for x in range(-1, 2):
@@ -107,6 +111,8 @@ class Cube:
             # Stop the timer.
             self.timer.end()
             self.timing = False
+            last = self.timer.times 
+            self.timefile.s_times.append(str(last[len(last)-1]))
 
         self.timer.update()
 
@@ -141,7 +147,7 @@ class Cube:
         return not self.moving and not self.queue.get(0) and not self.anims.get(0)
 
 
-    def solved(self):
+    def solved(self): 
         """Checks if the cube is solved.
 
         Returns:
@@ -165,9 +171,10 @@ class Cube:
 
         self.timing = True
         self.scramble()
+        self.timefile.time_w = True 
 
 
-    def scramble(self, l=25):
+    def scramble(self, l=1): 
         """Scrambles the cube.
 
         This implementation prevents degenerate cases (i.e. R L R) for

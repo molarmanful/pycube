@@ -75,8 +75,12 @@ def draw():
     text('MODE: ' + ['keyboard', 'mouse'][CUBE.mmode], 3, 3)
     text('TIMES: ' + ', '.join(map(str, CUBE.timer.times)), 3, 30)
 
-    CAM.endHUD()
+    CAM.endHUD() 
 
+
+def stop():
+    CUBE.timefile.to_file() 
+    print('closed file') 
 
 def mousePressed():
 
@@ -114,7 +118,7 @@ def keyPressed():
 
         elif key == ' ' and not CUBE.timing:
             # Press SPACEBAR to begin a time attempt.
-            CUBE.time()
+            CUBE.time() 
 
     if not CUBE.mmode:
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':
