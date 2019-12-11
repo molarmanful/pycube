@@ -85,6 +85,11 @@ def draw():
         message(2) 
     elif CUBE.solving: 
         message(3) 
+    elif CUBE.scrambling:
+        message(4) 
+    elif not CUBE.timing:
+        message(5) 
+        
 
 
 def stop():
@@ -111,6 +116,20 @@ def message(mesg):
         textSize(40) 
         textAlign(RIGHT, TOP)
         text("Solving...", (6*width)/11, 20)  
+        CAM.endHUD()
+    elif mesg == 4: 
+        CAM.beginHUD() 
+        fill(0,102,0) 
+        textSize(40) 
+        textAlign(RIGHT, TOP)
+        text("Scrambling...", (6*width)/11, 20)  
+        CAM.endHUD()
+    elif mesg == 5: 
+        CAM.beginHUD() 
+        fill(0,102,0) 
+        textSize(40) 
+        textAlign(RIGHT, TOP)
+        text("Press the Space bar to begin a timed attempt", (6*width)/11, 20)   
         CAM.endHUD()
         
         

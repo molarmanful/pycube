@@ -196,7 +196,7 @@ class Cube:
         self.timing = True
         self.scramble()
         self.timefile.time_w = True 
-        self.dispm1, self.dispm2 = False, False 
+        self.dispm1, self.dispm2 = False, False  
 
 
     def scramble(self, l=25): 
