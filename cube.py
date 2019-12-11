@@ -35,7 +35,7 @@ class Cube:
 
     """
 
-    def __init__(self, colors, sz=100, speed=.3):
+    def __init__(self, colors, sz=100, speed=.1): 
         self.colors = colors
         self.sz = sz
         self.speed = speed

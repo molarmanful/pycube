@@ -127,9 +127,9 @@ def message(mesg):
     elif mesg == 5: 
         CAM.beginHUD() 
         fill(0,102,0) 
-        textSize(40) 
+        textSize(30) 
         textAlign(RIGHT, TOP)
-        text("Press the Space bar to begin a timed attempt", (6*width)/11, 20)   
+        text("Press the Space bar to begin a timed attempt", (6.5*width)/10, 20)   
         CAM.endHUD()
         
         
