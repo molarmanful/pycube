@@ -12,7 +12,7 @@ class File():
             self.s_times = list(lines.strip().split(',') )   
         self.filehandler.close() 
         
-    def to_file(self):    
+    def write_and_close(self):     
         self.filehandler = open(".timefile.csv", "w")
         self.filehandler.write(",".join(self.s_times)) 
         self.filehandler.close()    

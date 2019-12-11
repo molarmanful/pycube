@@ -199,7 +199,7 @@ class Cube:
         self.dispm1, self.dispm2 = False, False 
 
 
-    def scramble(self, l=1): 
+    def scramble(self, l=25): 
         """Scrambles the cube.
 
         This implementation prevents degenerate cases (i.e. R L R) for
@@ -266,7 +266,7 @@ class Cube:
                     m = m + "'"
 
                 # Push inverse move to history queue.
-                self.moved.push(m)
+                self.moved.push(m) 
 
 
     def solve(self):

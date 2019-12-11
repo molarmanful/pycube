@@ -71,7 +71,7 @@ def draw():
 
     CAM.beginHUD()
 
-    fill(0)
+    fill(0,102,0) 
     textSize(20)
     textAlign(LEFT, TOP)
     text('MODE: ' + ['keyboard', 'mouse'][CUBE.mmode], 3, 3)
@@ -83,26 +83,36 @@ def draw():
         message(1)  
     elif CUBE.dispm2:  
         message(2) 
+    elif CUBE.solving: 
+        message(3) 
 
 
 def stop():
-    CUBE.timefile.to_file() 
+    CUBE.timefile.write_and_close()  
     
 def message(mesg): 
     if mesg == 1:
         CAM.beginHUD() 
-        fill(0)
-        textSize(30)
+        fill(0,102,0) 
+        textSize(40)
         textAlign(RIGHT, TOP) 
-        text("You solved the cube!", (6*width)/10, 10)
+        text("You solved the cube!", (6*width)/10, 20)
         CAM.endHUD() 
-    else:
+    elif mesg == 2:
         CAM.beginHUD() 
-        fill(0)
-        textSize(30) 
+        fill(0,102,0) 
+        textSize(40) 
         textAlign(RIGHT, TOP)
-        text("You solved the cube! Best Time!!", (6*width)/10, 10)  
+        text("You solved the cube! Best Time!!", (6*width)/10, 20)  
         CAM.endHUD() 
+    elif mesg == 3:
+        CAM.beginHUD() 
+        fill(0,102,0) 
+        textSize(40) 
+        textAlign(RIGHT, TOP)
+        text("Solving...", (6*width)/11, 20)  
+        CAM.endHUD()
+        
         
 def mousePressed():
 
@@ -136,11 +146,16 @@ def keyPressed():
                 CUBE.timer.end()
                 CUBE.timing = False
 
-            CUBE.solve()
+            CUBE.solve()  
 
-        elif key == ' ' and not CUBE.timing:
+        elif key == ' ' and not CUBE.timing: 
             # Press SPACEBAR to begin a time attempt.
             CUBE.time() 
+            
+    if key == 'q' or key == 'Q':  
+        link("https://bennyboy.tech/cubetut")  
+    elif key == 'h' or key == 'H':  
+        link("https://processing.org/examples/embeddedlinks.html") 
 
     if not CUBE.mmode:
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':
