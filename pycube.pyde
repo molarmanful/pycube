@@ -5,16 +5,16 @@ distributable under the MIT License. Makes use of the PeasyCam library
 for camera-based dragging.
 
 Todo:
-    * Implement timing mechanisms.
-    * Finish UI.
     * Implement multiplayer networking.
 
 """
 
 from __future__ import division
+add_library('net')
 add_library('peasycam')
 from cube import Cube
 from buffer import Buffer
+
 
 # Color order is FBUDLR.
 COLORS = [
@@ -25,11 +25,30 @@ COLORS = [
           color(  0,   0, 255),
           color(  0, 255,   0)
           ]
+SIZE = 100
+SPEED = .3
+
+SHOWT = True
+
+MODE = 0
+IP = '127.0.0.1'
+PORT = 69
+
+try:
+    import conf as conf
+    if hasattr(conf, 'COLORS'): COLORS = conf.COLORS
+    if hasattr(conf, 'SIZE'  ): SIZE = conf.SIZE
+    if hasattr(conf, 'SPEED' ): SPEED = conf.SPEED
+    if hasattr(conf, 'MODE'  ): MODE = conf.MODE
+    if hasattr(conf, 'IP'    ): IP = conf.IP
+    if hasattr(conf, 'PORT'  ): PORT = conf.PORT
+except:
+    print('no conf.py found, falling back to defaults')
 
 
 def setup():
 
-    global CAM, BUF, BCAM, CUBE, SHOWT
+    global CAM, BUF, BCAM, CUBE, SERVER, CLIENT
 
     fullScreen(P3D)
 
@@ -53,9 +72,12 @@ def setup():
     BCAM.setActive(False)
 
     # Initialize the cube.
-    CUBE = Cube(COLORS)
+    CUBE = Cube(COLORS, SIZE, SPEED)
 
-    SHOWT = True
+    if MODE == 1:
+        SERVER = Server(this, PORT)
+    if MODE == 2:
+        CLIENT = CLIENT(this, IP, PORT)
 
 
 def draw():
