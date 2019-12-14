@@ -76,7 +76,7 @@ def setup():
 
     if MODE == 1:
         SERVER = Server(this, PORT)
-    if MODE == 2:
+    elif MODE == 2:
         CLIENT = CLIENT(this, IP, PORT)
 
 
