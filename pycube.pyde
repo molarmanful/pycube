@@ -28,27 +28,20 @@ COLORS = [
 SIZE = 100
 SPEED = .3
 
-SHOWT = True
-
-MODE = 0
-IP = '127.0.0.1'
-PORT = 69
-
 try:
     import conf as conf
     if hasattr(conf, 'COLORS'): COLORS = conf.COLORS
     if hasattr(conf, 'SIZE'  ): SIZE = conf.SIZE
     if hasattr(conf, 'SPEED' ): SPEED = conf.SPEED
-    if hasattr(conf, 'MODE'  ): MODE = conf.MODE
-    if hasattr(conf, 'IP'    ): IP = conf.IP
-    if hasattr(conf, 'PORT'  ): PORT = conf.PORT
 except:
     print('no conf.py found, falling back to defaults')
+
+SHOWT = True
 
 
 def setup():
 
-    global CAM, BUF, BCAM, CUBE, SERVER, CLIENT
+    global CAM, BUF, BCAM, CUBE
 
     fullScreen(P3D)
 
@@ -73,11 +66,6 @@ def setup():
 
     # Initialize the cube.
     CUBE = Cube(COLORS, SIZE, SPEED)
-
-    if MODE == 1:
-        SERVER = Server(this, PORT)
-    elif MODE == 2:
-        CLIENT = CLIENT(this, IP, PORT)
 
 
 def draw():
