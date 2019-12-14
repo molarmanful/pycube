@@ -34,7 +34,6 @@ class Stack:
         self.items.extend(ms)
 
 
-
     def pop(self):
         """Removes the top of the stack.
 
@@ -58,4 +57,3 @@ class Stack:
 
         if len(self.items) > i:
             return self.items[i]
-

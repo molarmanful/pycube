@@ -46,6 +46,8 @@ class Cube:
         self.timer = Timer()
         self.timing = False
         self.mmode = False
+        self.anims = Stack()
+        self.mmode = True
         self.moving = False
         self.solving = False
         self.scrambling = False
