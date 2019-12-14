@@ -11,6 +11,7 @@ Welcome to pycube's documentation!
    source/piece
    source/stack
    source/sticker
+   source/timer
 
 
 
