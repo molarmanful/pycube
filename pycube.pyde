@@ -11,6 +11,7 @@ Todo:
 
 """
 
+from __future__ import division
 add_library('peasycam')
 from cube import Cube
 from buffer import Buffer
@@ -28,7 +29,7 @@ COLORS = [
 
 def setup():
 
-    global CAM, BUF, BCAM, CUBE
+    global CAM, BUF, BCAM, CUBE, SHOWT
 
     fullScreen(P3D)
 
@@ -54,6 +55,8 @@ def setup():
     # Initialize the cube.
     CUBE = Cube(COLORS)
 
+    SHOWT = True
+
 
 def draw():
 
@@ -61,78 +64,160 @@ def draw():
     rotateX(-HALF_PI / 3)
     rotateY(HALF_PI * 2 / 3)
 
-
     # Update both cube and buffer.
     CUBE.anim()
     CUBE.display()
     BUF.update()
-    
-    
 
     CAM.beginHUD()
 
-    fill(0,102,0) 
+    fill(0)
     textSize(20)
-    textAlign(LEFT, TOP)
-    text('MODE: ' + ['keyboard', 'mouse'][CUBE.mmode], 3, 3)
-    text('TIMES: ' + ', '.join(map(str, CUBE.timer.times)), 3, 30)
+    textAlign(RIGHT, TOP)
+    text('MODE: ' + ['keyboard', 'mouse'][CUBE.mmode], width - 3, 3)
 
-    CAM.endHUD() 
-    
-    if CUBE.dispm1: 
-        message(1)  
-    elif CUBE.dispm2:  
-        message(2) 
-    elif CUBE.solving: 
-        message(3) 
+    start = 3
+    inc = 27
+    times = CUBE.timer.times
+
+    def trunc3(x):
+        return int(x * 1000) / 1000
+
+    def mn(xs):
+        return min([x for x in xs if x != 'DNF'])
+
+    def mx(xs):
+        return max([x for x in xs if x != 'DNF'])
+
+    def mean(xs):
+        if 'DNF' in xs:
+            return 'DNF'
+        return trunc3(sum(xs) / len(xs))
+
+    def best(f, n, xs):
+        res = []
+        for i in range(len(xs)):
+            if(i + n < len(xs)):
+                res.append(f(xs[i:i + n]))
+        if all(x == 'DNF' for x in xs):
+            return 'DNF'
+        else:
+            return min([x for x in res if x != 'DNF'])
+
+    def avg(xs):
+        ns = [float('inf') if x == 'DNF' else x for x in xs]
+        ns.remove(min(ns))
+        ns.remove(max(ns))
+        if float('inf') in ns:
+            return 'DNF'
+        return trunc3(mean(ns))
+
+    textAlign(LEFT, TOP)
+
+    if SHOWT:
+
+        if len(times) == 0:
+            text('No times... yet.', 3, start)
+
+        else:
+            text('TIMES:', 3, start)
+            for i in range(0, len(times), 5):
+                start += inc
+                text('  '.join(map(str, times[i:i + 5])), 3, start)
+
+    else:
+
+        text('# OF TIMES: ' + str(len(times)), 3, start)
+
+        start += inc
+        if len(times):
+            start += inc
+            text('SESSION BEST: ' + str(trunc3(mn(times))), 3, start)
+            start += inc
+            text('SESSION WORST: ' + str(trunc3(mx(times))), 3, start)
+            start += inc
+            text('SESSION MEAN: ' + str(mean(times)), 3, start)
+        if len(times) > 2:
+            start += inc
+            text('SESSION AVG: ' + str(avg(times)), 3, start)
+
+        start += inc
+        if len(times) > 2:
+            start += inc
+            text('BEST mo3: ' + str(best(mean, 3, times)), 3, start)
+        if len(times) > 4:
+            start += inc
+            text('BEST ao5: ' + str(best(avg, 5, times)), 3, start)
+        if len(times) > 11:
+            start += inc
+            text('BEST ao12: ' + str(best(avg, 12, times)), 3, start)
+        if len(times) > 99:
+            start += inc
+            text('BEST ao100: ' + str(best(avg, 100, times)), 3, start)
+
+        start += inc
+        if len(times) > 2:
+            start += inc
+            text('CURRENT bo3: ' + str(trunc3(mn(times[-3:]))), 3, start)
+            start += inc
+            text('CURRENT wo3: ' + str(trunc3(mx(times[-3:]))), 3, start)
+            start += inc
+            text('CURRENT mo3: ' + str(mean(times[-3:])), 3, start)
+
+        start += inc
+        if len(times) > 4:
+            start += inc
+            text('CURRENT bo5: ' + str(trunc3(mn(times[-5:]))), 3, start)
+            start += inc
+            text('CURRENT wo5: ' + str(trunc3(mx(times[-5:]))), 3, start)
+            start += inc
+            text('CURRENT ao5: ' + str(avg(times[-5:])), 3, start)
+
+        start += inc
+        if len(times) > 11:
+            start += inc
+            text('CURRENT bo12: ' + str(trunc3(mn(times[-5:]))), 3, start)
+            start += inc
+            text('CURRENT wo12: ' + str(trunc3(mx(times[-5:]))), 3, start)
+            start += inc
+            text('CURRENT ao12: ' + str(avg(times[-5:])), 3, start)
+
+        start += inc
+        if len(times) > 99:
+            start += inc
+            text('CURRENT bo100: ' + str(trunc3(mn(times[-100:]))), 3, start)
+            start += inc
+            text('CURRENT wo100: ' + str(trunc3(mx(times[-100:]))), 3, start)
+            start += inc
+            text('CURRENT ao100: ' + str(avg(times[-100:])), 3, start)
+
+    if CUBE.disp:
+        best = ''
+        if CUBE.best():
+            best = ' New personal best!'
+        msg('You solved the cube!' + best)
+    elif CUBE.solving:
+        msg('Solving...')
     elif CUBE.scrambling:
-        message(4) 
+        msg('Scrambling...')
     elif not CUBE.timing:
-        message(5) 
-        
+        msg('Press SPACE to begin a timed attempt')
+
+    CAM.endHUD()
 
 
 def stop():
-    CUBE.timefile.write_and_close()  
-    
-def message(mesg): 
-    if mesg == 1:
-        CAM.beginHUD() 
-        fill(0,102,0) 
-        textSize(40)
-        textAlign(RIGHT, TOP) 
-        text("You solved the cube!", (6*width)/10, 20)
-        CAM.endHUD() 
-    elif mesg == 2:
-        CAM.beginHUD() 
-        fill(0,102,0) 
-        textSize(40) 
-        textAlign(RIGHT, TOP)
-        text("You solved the cube! Best Time!!", (6*width)/10, 20)  
-        CAM.endHUD() 
-    elif mesg == 3:
-        CAM.beginHUD() 
-        fill(0,102,0) 
-        textSize(40) 
-        textAlign(RIGHT, TOP)
-        text("Solving...", (6*width)/11, 20)  
-        CAM.endHUD()
-    elif mesg == 4: 
-        CAM.beginHUD() 
-        fill(0,102,0) 
-        textSize(40) 
-        textAlign(RIGHT, TOP)
-        text("Scrambling...", (6*width)/11, 20)  
-        CAM.endHUD()
-    elif mesg == 5: 
-        CAM.beginHUD() 
-        fill(0,102,0) 
-        textSize(30) 
-        textAlign(RIGHT, TOP)
-        text("Press the Space bar to begin a timed attempt", (6.5*width)/10, 20)   
-        CAM.endHUD()
-        
-        
+    CUBE.file.write('\n'.join(map(str, CUBE.timer.times)))
+    CUBE.file.close()
+
+
+def msg(txt):
+
+    textSize(30)
+    textAlign(CENTER, TOP)
+    text(txt, width / 2, 3)
+
+
 def mousePressed():
 
     if CUBE.mmode and CUBE.free():
@@ -144,6 +229,8 @@ def mousePressed():
 
 def keyPressed():
 
+    global SHOWT
+
     if key == ENTER:
         # Switch between mouse and keyboard modes.
         CAM.reset(300)
@@ -151,6 +238,12 @@ def keyPressed():
         CUBE.mmode = not CUBE.mmode
         CAM.setActive(CUBE.mmode)
         BCAM.setActive(CUBE.mmode)
+
+    elif key == 'q':
+        link("https://bennyboy.tech/cubetut")
+
+    elif key == '/':
+        SHOWT = not SHOWT
 
     elif CUBE.free():
 
@@ -165,16 +258,11 @@ def keyPressed():
                 CUBE.timer.end()
                 CUBE.timing = False
 
-            CUBE.solve()  
+            CUBE.solve()
 
-        elif key == ' ' and not CUBE.timing: 
+        elif key == ' ' and not CUBE.timing:
             # Press SPACEBAR to begin a time attempt.
-            CUBE.time() 
-            
-    if key == 'q' or key == 'Q':  
-        link("https://bennyboy.tech/cubetut")  
-    elif key == 'h' or key == 'H':  
-        link("https://processing.org/examples/embeddedlinks.html") 
+            CUBE.time()
 
     if not CUBE.mmode:
         if isinstance(key, basestring) and key.upper() in 'LMRUEDFSBXYZ':

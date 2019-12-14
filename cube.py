@@ -3,7 +3,6 @@ from piece import Piece
 from anim import Anim
 from stack import Stack
 from timer import Timer
-from filehandle import File 
 
 
 class Cube:
@@ -32,10 +31,11 @@ class Cube:
         moving (bool): Whether the cube is currently animating.
         solving (bool): Whether the cube is currently solving.
         scrambling (bool): Whether the cube is currently scrambling.
+        file (open): File to write times to.
 
     """
 
-    def __init__(self, colors, sz=100, speed=.1): 
+    def __init__(self, colors, sz=100, speed=.3):
         self.colors = colors
         self.sz = sz
         self.speed = speed
@@ -49,11 +49,21 @@ class Cube:
         self.moving = False
         self.solving = False
         self.scrambling = False
-        self.timefile = File() 
-        self.timefile.create_file()   
-        self.dispm1 = False 
-        self.dispm2 = False 
-    
+        self.file = []
+        self.disp = False
+
+        open('.timefile.csv', 'a').close() # create file if nonexistent
+        self.file = open('.timefile.csv', 'r') # reopen file in read mode
+        for l in self.file:
+            try:
+                self.timer.times.append(float(l))
+            except:
+                if l == 'DNF':
+                    self.timer.times.append('DNF')
+
+        # reopen the file in write mode
+        self.file.close()
+        self.file = open('.timefile.csv', 'w+')
 
         id = 0
         for x in range(-1, 2):
@@ -113,18 +123,9 @@ class Cube:
             # Stop the timer.
             self.timer.end()
             self.timing = False
-            last = self.timer.times 
-    
-            if self.user_solved() and not self.highscore():
-                self.dispm1 = True
-                self.dispm2 = False 
-                self.timefile.time_w = False
-            elif self.user_solved and self.highscore():
-                self.dispm2 = True
-                self.dispm1 = False 
-                self.timefile.time_w = False 
-                
-            self.timefile.s_times.append(str(last[len(last)-1])) 
+
+            if self.solved() and self.timer.times[-1] != 'DNF':
+                self.disp = True
 
         self.timer.update()
 
@@ -159,7 +160,7 @@ class Cube:
         return not self.moving and not self.queue.get(0) and not self.anims.get(0)
 
 
-    def solved(self): 
+    def solved(self):
         """Checks if the cube is solved.
 
         Returns:
@@ -176,30 +177,30 @@ class Cube:
                         return False
 
         return True
-    
-    def user_solved(self):
-        if self.solved and self.timefile.time_w:
-            return True
-        return False 
-    
-    def highscore(self): 
-        time = self.timer.times[len(self.timer.times)-1] 
-        for i in self.timefile.s_times: 
-            if float(i) < float(time):  
-                return False
-        return True  
-            
+
+
+    def best(self):
+        """Checks if the last time is a personal best.
+
+        Returns:
+            bool: `True` if personal best, `False` otherwise.
+
+        """
+
+        last = self.timer.times[-1]
+        return last != 'DNF' and all(last <= t for t in self.timer.times if t != 'DNF')
+
 
     def time(self):
         """Sets up a timed solving attempt."""
 
         self.timing = True
         self.scramble()
-        self.timefile.time_w = True 
-        self.dispm1, self.dispm2 = False, False  
+
+        self.disp = False
 
 
-    def scramble(self, l=25): 
+    def scramble(self, l=25):
         """Scrambles the cube.
 
         This implementation prevents degenerate cases (i.e. R L R) for
@@ -266,7 +267,7 @@ class Cube:
                     m = m + "'"
 
                 # Push inverse move to history queue.
-                self.moved.push(m) 
+                self.moved.push(m)
 
 
     def solve(self):
