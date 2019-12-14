@@ -2,6 +2,7 @@ import random
 from piece import Piece
 from anim import Anim
 from stack import Stack
+from timer import Timer
 
 
 class Cube:
@@ -16,11 +17,21 @@ class Cube:
         colors (:obj:`list` of int): Color scheme in `FBUDLR` order.
         sz (int): Size of each cube piece (default 100).
         speed (int): Animation speed in radians per frame (default .3).
-        pieces (:obj:`list` of :obj:`Piece`): Container for all cube pieces.
-        queue (:obj:`Stack` of str): Queue for moves that need to be executed.
-        anims (:obj:`Stack`of :obj:`Anim`): Queue for animations that need to be run.
+        pieces (:obj:`list` of :obj:`piece.Piece`): Container for all
+            cube pieces.
+        queue (:py:class:`stack.Stack` of str): Queue for moves that
+            need to be executed.
+        moved (:py:class:`stack.Stack` of str): Queue for inverses of
+            previously executed moves.
+        anims (:py:class:`stack.Stack` of :py:class:`anim.Anim`): Queue
+            for animations that need to be run.
+        timer (:py:class:`timer.Timer`): The timer assigned to the cube.
+        timing (bool): Whether a timed attempt is in progress.
         mmode (bool): Whether mouse mode is on.
         moving (bool): Whether the cube is currently animating.
+        solving (bool): Whether the cube is currently solving.
+        scrambling (bool): Whether the cube is currently scrambling.
+        file (open): File to write times to.
 
     """
 
@@ -30,9 +41,31 @@ class Cube:
         self.speed = speed
         self.pieces = []
         self.queue = Stack()
+        self.moved = Stack()
+        self.anims = Stack()
+        self.timer = Timer()
+        self.timing = False
+        self.mmode = False
         self.anims = Stack()
         self.mmode = True
         self.moving = False
+        self.solving = False
+        self.scrambling = False
+        self.file = []
+        self.disp = False
+
+        open('.timefile.csv', 'a').close() # create file if nonexistent
+        self.file = open('.timefile.csv', 'r') # reopen file in read mode
+        for l in self.file:
+            try:
+                self.timer.times.append(float(l))
+            except:
+                if l == 'DNF':
+                    self.timer.times.append('DNF')
+
+        # reopen the file in write mode
+        self.file.close()
+        self.file = open('.timefile.csv', 'w+')
 
         id = 0
         for x in range(-1, 2):
@@ -64,6 +97,41 @@ class Cube:
             popMatrix()
 
 
+    def anim(self):
+        """Prioritizes actions based on the states of the cube's attributes."""
+
+        if self.anims.get(0):
+            if self.anims.get(0).done:
+                # Remove current animation when done.
+                self.anims.pop()
+            else:
+                # Progress current animation.
+                self.anims.get(0).step()
+
+        elif self.solving and self.solved():
+            # Reset cube after `Cube.solve()`.
+            self.queue.items = []
+            self.solving = False
+
+        elif self.queue.get(0):
+            if self.timing and not self.scrambling and not self.timer.ing:
+                # Start the timer after scrambling.
+                self.timer.start()
+
+            # Add queued moves to the animation queues.
+            self.move(self.queue.pop())
+
+        elif self.timer.ing and self.solved():
+            # Stop the timer.
+            self.timer.end()
+            self.timing = False
+
+            if self.solved() and self.timer.times[-1] != 'DNF':
+                self.disp = True
+
+        self.timer.update()
+
+
     def getpiece(self, x, y, z):
         """Finds the piece with the given (x,y,z) coordinates.
 
@@ -73,14 +141,25 @@ class Cube:
             z (int): The z-coordinate.
 
         Returns:
-            Piece: The found piece, or `None` if no piece matches the
-                query.
+            The found :py:class:`piece.Piece`, or `None` if no piece
+            matches the query.
 
         """
 
         for p in self.pieces:
             if (p.x, p.y, p.z) == (x, y, z):
                 return p
+
+
+    def free(self):
+        """Checks if the cube is idle and able to be acted upon.
+
+        Returns:
+            bool: True if idle, False otherwise.
+
+        """
+
+        return not self.moving and not self.queue.get(0) and not self.anims.get(0)
 
 
     def solved(self):
@@ -102,6 +181,27 @@ class Cube:
         return True
 
 
+    def best(self):
+        """Checks if the last time is a personal best.
+
+        Returns:
+            bool: `True` if personal best, `False` otherwise.
+
+        """
+
+        last = self.timer.times[-1]
+        return last != 'DNF' and all(last <= t for t in self.timer.times if t != 'DNF')
+
+
+    def time(self):
+        """Sets up a timed solving attempt."""
+
+        self.timing = True
+        self.scramble()
+
+        self.disp = False
+
+
     def scramble(self, l=25):
         """Scrambles the cube.
 
@@ -114,9 +214,11 @@ class Cube:
 
         """
 
+        self.scrambling = True
+
         a = ' '
         b = ' '
-        for i in range(l):
+        for n in range(l):
             choices = ['RL', 'UD', 'FB']
             for i, m in enumerate(choices):
                 if a in m:
@@ -127,35 +229,17 @@ class Cube:
                         choices[i] = ''
 
             b, a = a, random.choice(''.join(choices))
-            self.queue.push(a + random.choice(["'", '2', '']))
+            self.queue.add(a + random.choice(["'", '2', '']))
 
-
-    def anim(self):
-        """Prioritizes actions based on the states of the queues.
-
-        This method is called during each `draw` call (see
-        `pycube.pyde`). It prioritizes animating from `Cube.anims`, then
-        clearing out moves from `Cube.queue`.
-        """
-
-        if self.anims.get(0):
-            if self.anims.get(0).done:
-                # Remove current animation when done.
-                self.anims.pop()
-            else:
-                # Progress current animation.
-                self.anims.get(0).step()
-
-        elif self.queue.get(0):
-            # Add queued moves to the animation queues.
-            self.move(self.queue.pop())
+        # Add a '#' to the move queue as a special indicator.
+        self.queue.add('#')
 
 
     def move(self, *ms):
         """Parses cube notation into animations.
 
         Args:
-            *ms (`str`): Series of notated moves.
+            *ms: Series of notated moves.
 
         """
 
@@ -168,14 +252,32 @@ class Cube:
                 }
 
         for m in ms:
-            axis, slice, dir = mmap[m[0].upper()]
-
-            if "'" in m:
-                self.anims.add(Anim(self, axis, slice, -dir, self.speed))
-            elif '2' in m:
-                self.anims.add(Anim(self, axis, slice, dir, self.speed), Anim(self, axis, slice, dir, self.speed))
+            if m == '#':
+                # End the scramble if '#' is found.
+                self.scrambling = False
             else:
-                self.anims.add(Anim(self, axis, slice, dir, self.speed))
+                axis, slice, dir = mmap[m[0].upper()]
+                if "'" in m:
+                    # Invert the move.
+                    self.anims.add(Anim(self, axis, slice, -dir, self.speed))
+                    m = m.replace("'", '')
+                elif '2' in m:
+                    # Double the move.
+                    self.anims.add(Anim(self, axis, slice, dir, self.speed), Anim(self, axis, slice, dir, self.speed))
+                else:
+                    self.anims.add(Anim(self, axis, slice, dir, self.speed))
+                    m = m + "'"
+
+                # Push inverse move to history queue.
+                self.moved.push(m)
+
+
+    def solve(self):
+        """Rewinds the cube to a solved state."""
+
+        self.queue.add(*self.moved.items)
+        self.solving = True
+        self.moved.items = []
 
 
     def moveX(self, slice, dir=1):

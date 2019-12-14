@@ -38,10 +38,10 @@ class Anim:
     def step(self):
         """Progresses the animation by `speed` radians.
 
-        This method is called from the animation stack (see `Cube.anim`
-        in `cube.py`) during each `draw` call (see `pycube.pyde`).
-        After `PI / 2` radians (90deg), the animation stops and the cube
-        is updated to match the rotation.
+        This method is called from the animation stack
+        (:py:attr:`cube.Cube.anims`) during each `draw` call (see
+        `pycube.pyde`). After `PI / 2` radians (90deg), the animation
+        stops and the cube is updated to match the rotation.
         """
 
         if self.ing:
@@ -66,5 +66,3 @@ class Anim:
                     self.cube.moveY(self.slice, -self.dir)
                 else:
                     self.cube.moveX(self.slice, self.dir)
-
-                print(self.cube.solved())
